@@ -9,10 +9,38 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+
+
 namespace LedsGUI
 {
-    class FirmataModule
+
+
+    public class FirmataModule : IDisposable
     {
+        public bool Ready { get; private set; } = false;
+        private bool isSendingCustomPalette = false;
+
+        const bool COMMOM_ANODE = true;
+
+        const byte STRIP_DATA                        = 0x0F;
+
+        const byte DIGITAL_CHANGEMODE                = 0x01;
+        const byte DIGITAL_CHANGEBRIGHT              = 0x02;
+        const byte DIGITAL_CHANGEINTERVAL            = 0x03;
+        const byte DIGITAL_CHANGECOLOR               = 0x04;
+        const byte DIGITAL_MUSICAL_PATTERN           = 0x05;
+        const byte DIGITAL_CUSTOM_PALETTE            = 0x06;
+        const byte DIGITAL_CUSTOM_PALETTE_PROPERTIES = 0x07;
+
+        const byte ANALOG_CHANGEMODE                 = 0x08;
+        const byte ANALOG_CHANGEBRIGHT               = 0x09;
+        const byte ANALOG_CHANGEINTERVAL             = 0x0A;
+        const byte ANALOG_CHANGECOLOR                = 0x0B;
+        const byte ANALOG_MUSICAL_PATTERN            = 0x0C;
+
+        public List<FirmataMode> AnalogModesAvailable = new List<FirmataMode>();
+        public List<FirmataMode> DigitalModesAvailable = new List<FirmataMode>();
+        /*
         byte[] lights = new byte[360] {       0,   0,   0,   0,   0,   1,   1,   2,
                                               2,   3,   4,   5,   6,   7,   8,   9,
                                              11,  12,  13,  15,  17,  18,  20,  22,
@@ -73,40 +101,50 @@ namespace LedsGUI
                                             191, 193, 195, 198, 200, 202, 204, 206, 208, 210, 212, 215, 217, 219, 221,
                                             223, 225, 227, 229, 232, 234, 236, 238, 240, 242, 244, 246, 249, 251, 253,
                                             255 };
-
-        byte[] Breath = new byte[101] {  255, 252, 249, 247, 244, 242, 239, 237, 234, 232, 229, 226, 224, 221, 219, 216,
-                                         214, 211, 209, 206, 204, 201, 198, 196, 193, 191, 188, 186, 183, 181, 178, 175,
-                                         173, 170, 168, 165, 163, 160, 158, 155, 153, 150, 147, 145, 142, 140, 137, 135,
-                                         132, 130, 127, 124, 122, 119, 117, 114, 112, 109, 107, 104, 102,  99,  96,  94,
-                                          91,  89,  86,  84,  81,  79,  76,  73,  71,  68,  66,  63,  61,  58,  56,  53,
-                                          51,  48,  45,  43,  40,  38,  35,  33,  30,  28,  25,  22,  20,  17,  15,  12,
-                                          10,   7,   5,   2,   0 };
-         
-        List<Color> Colors = new List<Color>(7);
-        List<Color> ColorsSmooth = new List<Color>(3);
+        */ 
         
-        public static class Pinos
-        {
-            public const int red = 11;
-            public const int green = 10;
-            public const int blue = 9;
-        }
-
+        private EnhancedSerialConnection connection;
         private ArduinoSession arduino;
 
         private Random random = new Random();
 
-        byte redValue, greenValue, blueValue;
-
         public static Color SoundSpectrumColor = new Color();
-        
-        //random
-        int a0, a1, a2;
-        int[] color = new int[3];
-        int randomCount = 0;
+        public static Color[] DigitalSpectrumPattern = new Color[8];
 
-        Color LastColor;
+        //random
+        int[] color = new int[3];
         Random rnd = new Random();
+
+        public FirmataModule()
+        {
+            AnalogModesAvailable.Add(new FirmataMode("Real HSV Rainbow", 0, false, true, true));
+            AnalogModesAvailable.Add(new FirmataMode("Power Conscious Rainbow", 1, false, true, true));
+            AnalogModesAvailable.Add(new FirmataMode("Sine Wave Rainbow", 2, false, true, true));
+            AnalogModesAvailable.Add(new FirmataMode("Static Color", 3, true, false, true));
+            AnalogModesAvailable.Add(new FirmataMode("Breathing", 4, true, true, false));
+            AnalogModesAvailable.Add(new FirmataMode("Musical", 5, false, false, false, FirmataMode.MoreMode.analogMusical));
+            AnalogModesAvailable.Add(new FirmataMode("Random Color", 6, false, true, true));
+            AnalogModesAvailable.Add(new FirmataMode("Deactivated", 7, false, false, false));
+
+            DigitalModesAvailable.Add(new FirmataMode("Snake Rainbow", 0, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Real HSV Rainbow (Analog)", 1, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Power Conscious Rainbow (Analog)", 2, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Sine Wave Rainbow (Analog)", 3, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Static Color", 4, true, false, true));
+            DigitalModesAvailable.Add(new FirmataMode("Breathing", 5, true, true, false));
+            DigitalModesAvailable.Add(new FirmataMode("Musical", 6, false, false, false, FirmataMode.MoreMode.digitalMusical));
+            DigitalModesAvailable.Add(new FirmataMode("Deactivated", 7, false, false, false));
+            DigitalModesAvailable.Add(new FirmataMode("HSV Rainbow", 8, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("HSV Rainbow Stripes", 9, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Cloud", 10, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Lava", 11, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Ocean", 12, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Forest", 13, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Party", 14, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Heat", 15, false, true, true));
+            DigitalModesAvailable.Add(new FirmataMode("Custom Pallete", 16, false, true, true, FirmataMode.MoreMode.digitalCustomPattern));
+            //implement cobrinha like pacman sugestao da neechan
+        }
 
         public void FirmataSetup(String porta)
         {
@@ -118,194 +156,266 @@ namespace LedsGUI
 
             try
             {
-                arduino = new ArduinoSession(new EnhancedSerialConnection(porta, SerialBaudRate.Bps_57600));
-                arduino.SetDigitalPinMode(Pinos.red, PinMode.PwmOutput);
-                arduino.SetDigitalPinMode(Pinos.green, PinMode.PwmOutput);
-                arduino.SetDigitalPinMode(Pinos.blue, PinMode.PwmOutput);
+                connection = new EnhancedSerialConnection(porta, SerialBaudRate.Bps_9600);
+                arduino = new ArduinoSession(connection);
+
+                Ready = true;
             }
             catch (Exception)
             {
 
-                throw;
             }
-
-            Colors.Add(Color.Red);
-            Colors.Add(Color.Orange);
-            Colors.Add(Color.Yellow);
-            Colors.Add(Color.Green);
-            Colors.Add(Color.Cyan);
-            Colors.Add(Color.Blue);
-            Colors.Add(Color.FromArgb(255, 0, 255)); //pink
-
-            ColorsSmooth.Add(Color.Red);
-            ColorsSmooth.Add(Color.Green);
-            ColorsSmooth.Add(Color.Blue);
         }
 
         public void Stop()
         {
-            Desactivated();
-            arduino.Dispose();
+            Ready = false;
+            if(arduino != null) arduino.Dispose();
         }
 
-        public void Desactivated()
+        public void SendDigitalCustomPalette(CustomPalette customPalette)
         {
-            arduino.SetDigitalPin(Pinos.red, 0);
-            arduino.SetDigitalPin(Pinos.green, 0);
-            arduino.SetDigitalPin(Pinos.blue, 0);
-        }
+            if (customPalette == null || !Ready) return;
+            //ensure that the cummunication channel is clear as possible
+            //if analog musicalmode is active, it will not send any updates to analog strip
+            //while a custom digital palette is being sent
+            isSendingCustomPalette = true;
+            
+            //it will send 16 short messages for each color
+            //then it will send a message with the properties
+            byte[] command = new byte[11];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = DIGITAL_CUSTOM_PALETTE;
+            //payload bytes on for loop below
+            command[10] = 0xF7;
 
-        public void StaticSingleColor(byte red, byte green, byte blue)
-        {
-            arduino.SetDigitalPin(Pinos.red, red);
-            arduino.SetDigitalPin(Pinos.green, green);
-            arduino.SetDigitalPin(Pinos.blue, blue);
-        }
+            for (int i = 0; i < 16; i++)
+            {
+                command[3] = (byte) i;
+                command[4] = (byte) (customPalette.PatternColors[i].R & 0x7F);
+                command[5] = (byte)((customPalette.PatternColors[i].R >> 7) & 0x7F);
+                command[6] = (byte) (customPalette.PatternColors[i].G & 0x7F);
+                command[7] = (byte)((customPalette.PatternColors[i].G >> 7) & 0x7F);
+                command[8] = (byte) (customPalette.PatternColors[i].B & 0x7F);
+                command[9] = (byte)((customPalette.PatternColors[i].B >> 7) & 0x7F);
 
-        public void StaticSingleColor(Color Color)
-        {
-            arduino.SetDigitalPin(Pinos.red, Color.R);
-            arduino.SetDigitalPin(Pinos.green, Color.G);
-            arduino.SetDigitalPin(Pinos.blue, Color.B);
-        }
-
-        public void BreathTick(Color color, float percent)
-        {
-            arduino.SetDigitalPin(Pinos.red,   (int) (color.R * percent) );
-            arduino.SetDigitalPin(Pinos.green, (int) (color.G * percent) );
-            arduino.SetDigitalPin(Pinos.blue,  (int) (color.B * percent) );
-        }
-
-        public void RealHSVTick(int angle)
-        {
-            if (angle < 60)
-            {
-                redValue = 255;
-                greenValue = HSVlights[angle];
-                blueValue = 0;
-            }
-            else if (angle < 120)
-            {
-                redValue = HSVlights[120 - angle];
-                greenValue = 255;
-                blueValue = 0;
-            }
-            else if (angle < 180)
-            {
-                redValue = 0;
-                greenValue = 255;
-                blueValue = HSVlights[angle - 120];
-            }
-            else if (angle < 240)
-            {
-                redValue = 0;
-                greenValue = HSVlights[240 - angle];
-                blueValue = 255;
-            }
-            else if (angle < 300)
-            {
-                redValue = HSVlights[angle - 240];
-                greenValue = 0;
-                blueValue = 255;
-            }
-            else
-            {
-                redValue = 255;
-                greenValue = 0;
-                blueValue = HSVlights[360 - angle];
+                connection.Write(command, 0, command.Length);
             }
 
-            arduino.SetDigitalPin(Pinos.blue, blueValue);
-            arduino.SetDigitalPin(Pinos.green, greenValue);
-            arduino.SetDigitalPin(Pinos.red, redValue);
-        }
+            command = new byte[8];
 
-        public void PowerHSVTick(int angle)
-        {
-            if (angle < 120)
-            {
-                redValue = HSVpower[120 - angle];
-                greenValue = HSVpower[angle];
-                blueValue = 0;
-            }
-            else if (angle < 240)
-            {
-                redValue = 0;
-                greenValue = HSVpower[240 - angle];
-                blueValue = HSVpower[angle - 120];
-            }
-            else
-            {
-                redValue = HSVpower[angle - 240];
-                greenValue = 0;
-                blueValue = HSVpower[360 - angle];
-            }
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = DIGITAL_CUSTOM_PALETTE_PROPERTIES;
+            command[3] = (customPalette.Blend) ? (byte)0x01 : (byte)0x00;
+            command[4] = (customPalette.Animate) ? (byte)0x01 : (byte)0x00;
+            command[5] = customPalette.increment;
+            command[6] = (byte) customPalette.paletteSize;
 
-            arduino.SetDigitalPin(Pinos.blue, blueValue);
-            arduino.SetDigitalPin(Pinos.green, greenValue);
-            arduino.SetDigitalPin(Pinos.red, redValue);
-        }
+            command[7] = 0xF7;
+            connection.Write(command, 0, command.Length);
 
-        public void SineWaveTick(int angle)
-        {
-            redValue = lights[(angle + 120) % 360];
-            greenValue = lights[angle];
-            blueValue = lights[(angle + 240) % 360];
 
-            arduino.SetDigitalPin(Pinos.red, redValue);
-            arduino.SetDigitalPin(Pinos.green, greenValue);
-            arduino.SetDigitalPin(Pinos.blue, blueValue);
-        }
+            isSendingCustomPalette = false;
 
-        [Obsolete] public void OldFlashTimerTick()
-        {
-            a0 = random.Next(240);
-            color[randomCount] = lights[a0];
-            a1 = random.Next(1);
-            a2 = ((~ a1) + randomCount + 1) % 3;
-            a1 = (randomCount + a1 + 1) % 3;
-            color[a1] = lights[(a0 + 100) % 240];
-            color[a2] = 0;
-
-            arduino.SetDigitalPin(Pinos.red, color[0]);
-            arduino.SetDigitalPin(Pinos.green, color[1]);
-            arduino.SetDigitalPin(Pinos.blue, color[2]);
-
-            randomCount = (randomCount + 1) % 3;
-        }
-
-        public void FlashTimerTick()
-        {
-            List<Color> CoresDisponiveis = new List<Color>();
-            Colors.ForEach((item) => { CoresDisponiveis.Add(item); });
-
-            if (LastColor != null)
-                CoresDisponiveis.Remove(LastColor);
-
-            Color SortedColor = CoresDisponiveis[rnd.Next(100) % 6];
-            LastColor = SortedColor;
-
-            StaticSingleColor(SortedColor.R, SortedColor.G, SortedColor.B);
-        }
-
-        public void SmoothRandomTick()
-        {
-            List<Color> CoresDisponiveis = new List<Color>();
-            ColorsSmooth.ForEach((item) => { CoresDisponiveis.Add(item); });
-
-            if (LastColor != null)
-                CoresDisponiveis.Remove(LastColor);
-
-            Color SortedColor = CoresDisponiveis[rnd.Next(100) % 2];
-            LastColor = SortedColor;
-
-            StaticSingleColor(SortedColor.R, SortedColor.G, SortedColor.B);
         }
 
         public void SoundSpectrumTick()
         {
-            if(SoundSpectrumColor != null)
-                StaticSingleColor(SoundSpectrumColor);
+            if (SoundSpectrumColor == null || !Ready || isSendingCustomPalette) return;
+
+            byte[] command = new byte[10];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = ANALOG_MUSICAL_PATTERN;
+
+            command[3] = (byte)(SoundSpectrumColor.R & 0x7F);
+            command[4] = (byte)((SoundSpectrumColor.R >> 7) & 0x7F);
+            command[5] = (byte)(SoundSpectrumColor.G & 0x7F);
+            command[6] = (byte)((SoundSpectrumColor.G >> 7) & 0x7F);
+            command[7] = (byte)(SoundSpectrumColor.B & 0x7F);
+            command[8] = (byte)((SoundSpectrumColor.B >> 7) & 0x7F);
+
+            command[9] = 0xF7;
+
+            connection.Write(command, 0, command.Length);
+
+        }
+
+        public void DigitalSoundSpectrumTick()
+        {
+            if (DigitalSpectrumPattern == null || !Ready) return;
+
+            byte[] command = new byte[16];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = DIGITAL_MUSICAL_PATTERN;
+
+            command[3] = (byte)(DigitalSpectrumPattern[0].R & 0x7F);
+            command[4] = (byte)((DigitalSpectrumPattern[0].R >> 7) & 0x7F);
+            command[5] = (byte)(DigitalSpectrumPattern[0].G & 0x7F);
+            command[6] = (byte)((DigitalSpectrumPattern[0].G >> 7) & 0x7F);
+            command[7] = (byte)(DigitalSpectrumPattern[0].B & 0x7F);
+            command[8] = (byte)((DigitalSpectrumPattern[0].B >> 7) & 0x7F);
+
+            command[9] = (byte)(DigitalSpectrumPattern[1].R & 0x7F);
+            command[10] = (byte)((DigitalSpectrumPattern[1].R >> 7) & 0x7F);
+            command[11] = (byte)(DigitalSpectrumPattern[1].G & 0x7F);
+            command[12] = (byte)((DigitalSpectrumPattern[1].G >> 7) & 0x7F);
+            command[13] = (byte)(DigitalSpectrumPattern[1].B & 0x7F);
+            command[14] = (byte)((DigitalSpectrumPattern[1].B >> 7) & 0x7F);
+
+            command[15] = 0xF7;
+            connection.Write(command, 0, command.Length);
+        }
+
+        public void SendDigitalMode(byte mode)
+        {
+            if (!Ready) return;
+
+            byte[] command = new byte[5];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = DIGITAL_CHANGEMODE;
+            command[3] = mode;
+            command[4] = 0xF7;
+
+            connection.Write(command, 0, command.Length);
+        }
+
+        public void SendDigitalSpeed(byte speed)
+        {
+            if (!Ready) return;
+
+            byte[] command = new byte[5];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = DIGITAL_CHANGEINTERVAL;
+            command[3] = speed;
+            command[4] = 0xF7;
+
+            connection.Write(command, 0, command.Length);
+        }
+
+        public void SendDigitalBright(byte bright)
+        {
+            if (!Ready) return;
+
+            byte[] command = new byte[6];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = DIGITAL_CHANGEBRIGHT;
+            command[3] = (byte)(bright & 0x7F);
+            command[4] = (byte)(bright >> 7);
+            command[5] = 0xF7;
+
+            connection.Write(command, 0, command.Length);
+        }
+
+        public void SendDigitalColor(Color color)
+        {
+            if (!Ready) return;
+
+            byte[] command = new byte[10];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = DIGITAL_CHANGECOLOR;
+            command[3] = (byte)(color.R & 0x7F);
+            command[4] = (byte)(color.R >> 7);
+            command[5] = (byte)(color.G & 0x7F);
+            command[6] = (byte)(color.G >> 7);
+            command[7] = (byte)(color.B & 0x7F);
+            command[8] = (byte)(color.B >> 7);
+            command[9] = 0xF7;
+
+            connection.Write(command, 0, command.Length);
+        }
+
+        public void SendAnalogMode(byte mode)
+        {
+            if (!Ready) return;
+
+            byte[] command = new byte[5];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = ANALOG_CHANGEMODE;
+            command[3] = mode;
+            command[4] = 0xF7;
+
+            connection.Write(command, 0, command.Length);
+        }
+
+        public void SendAnalogSpeed(byte speed)
+        {
+            if (!Ready) return;
+
+            byte[] command = new byte[5];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = ANALOG_CHANGEINTERVAL;
+            command[3] = speed;
+            command[4] = 0xF7;
+
+            connection.Write(command, 0, command.Length);
+        }
+
+        public void SendAnalogBright(byte bright)
+        {
+            if (!Ready) return;
+
+            byte[] command = new byte[5];
+            command[0] = 0xF0;
+            command[1] = ANALOG_CHANGEBRIGHT;
+            command[2] = (byte)(bright & 0x7F);
+            command[3] = (byte)(bright >> 7);
+            command[4] = 0xF7;
+
+            connection.Write(command, 0, command.Length);
+        }
+
+        public void SendAnalogColor(Color color)
+        {
+            if (!Ready) return;
+
+            byte[] command = new byte[10];
+            command[0] = 0xF0;
+            command[1] = STRIP_DATA;
+            command[2] = ANALOG_CHANGECOLOR;
+            command[3] = (byte)(color.R & 0x7F);
+            command[4] = (byte)(color.R >> 7);
+            command[5] = (byte)(color.G & 0x7F);
+            command[6] = (byte)(color.G >> 7);
+            command[7] = (byte)(color.B & 0x7F);
+            command[8] = (byte)(color.B >> 7);
+            command[9] = 0xF7;
+
+            connection.Write(command, 0, command.Length);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);           
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // free managed resources  
+                if (connection != null)
+                {
+                    connection.Dispose();
+                    connection = null;
+                }
+
+                if (arduino != null)
+                {
+                    arduino.Dispose();
+                    arduino = null;
+                }
+            }
         }
     }
 }

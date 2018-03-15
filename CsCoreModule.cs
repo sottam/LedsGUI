@@ -20,14 +20,20 @@ namespace LedsGUI
 
 
 
-    class CsCoreModule
+    public class CsCoreModule : IDisposable
     {
         private WasapiCapture _soundIn;
         private IWaveSource _source;
         private PitchShifter _pitchShifter;
 
-        public LineSpectrum _lineSpectrum;
-        public VoicePrint3DSpectrum _voicePrint3DSpectrum;
+        public LineSpectrum _lineSpectrum; //analog
+        public VoicePrint3DSpectrum _voicePrint3DSpectrum; //analog
+
+        public LineSpectrum _DigitallineSpectrum; //digital
+        public VoicePrint3DSpectrum _DigitalvoicePrint3DSpectrum; //digital
+
+        public LineSpectrum _GenericlineSpectrum; //generic
+        public VoicePrint3DSpectrum _GenericvoicePrint3DSpectrum; //generic
 
         BasicSpectrumProvider spectrumProvider;
 
@@ -137,6 +143,48 @@ namespace LedsGUI
                 MinimumFrequency = 20 
             };
 
+            _DigitallineSpectrum = new LineSpectrum(fftSize)
+            {
+                SpectrumProvider = spectrumProvider,
+                UseAverage = true,
+                BarCount = 50,
+                BarSpacing = 2,
+                IsXLogScale = true,
+                ScalingStrategy = ScalingStrategy.Sqrt
+            };
+
+            _DigitalvoicePrint3DSpectrum = new VoicePrint3DSpectrum(fftSize)
+            {
+                SpectrumProvider = spectrumProvider,
+                UseAverage = true,
+                PointCount = 2,
+                IsXLogScale = false,
+                ScalingStrategy = ScalingStrategy.Linear,
+                MaximumFrequency = 250,
+                MinimumFrequency = 20
+            };
+
+            _GenericlineSpectrum = new LineSpectrum(fftSize)
+            {
+                SpectrumProvider = spectrumProvider,
+                UseAverage = true,
+                BarCount = 50,
+                BarSpacing = 2,
+                IsXLogScale = true,
+                ScalingStrategy = ScalingStrategy.Sqrt
+            };
+
+            _GenericvoicePrint3DSpectrum = new VoicePrint3DSpectrum(fftSize)
+            {
+                SpectrumProvider = spectrumProvider,
+                UseAverage = true,
+                PointCount = 200,
+                IsXLogScale = true,
+                ScalingStrategy = ScalingStrategy.Sqrt,
+                MaximumFrequency = 20000,
+                MinimumFrequency = 20
+            };
+
 
             //the SingleBlockNotificationStream is used to intercept the played samples
             var notificationSource = new SingleBlockNotificationStream(aSampleSource);
@@ -171,5 +219,41 @@ namespace LedsGUI
             }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // free managed resources  
+                if (soundInSource != null)
+                {
+                    soundInSource.Dispose();
+                    soundInSource = null;
+                }
+
+                if (mMDeviceEnumerator != null)
+                {
+                    mMDeviceEnumerator.Dispose();
+                    mMDeviceEnumerator = null;
+                }
+
+                if(mMNotificationClient != null)
+                {
+                    mMNotificationClient.Dispose();
+                    mMNotificationClient = null;
+                }
+
+                if(_soundIn != null)
+                {
+                    _soundIn.Dispose();
+                    _soundIn = null;
+                }
+            }
+        }
     }
 }

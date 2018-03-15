@@ -14,6 +14,8 @@ namespace LedsGUI.Cscore
         private readonly GradientCalculator _colorCalculator;
         private bool _isInitialized;
 
+        public enum DrawPurpose { ForAnalog, ForDigital, ForGeneric };
+
         public VoicePrint3DSpectrum(FftSize fftSize)
         {
             _colorCalculator = new GradientCalculator();
@@ -48,7 +50,7 @@ namespace LedsGUI.Cscore
             }
         }
 
-        public bool CreateVoicePrint3D(Graphics graphics, RectangleF clipRectangle, float xPos, Color background,
+        public bool CreateVoicePrint3D(Graphics graphics, RectangleF clipRectangle, float xPos, Color background, DrawPurpose dp,
             float lineThickness = 1f)
         {
             if (!_isInitialized)
@@ -79,7 +81,20 @@ namespace LedsGUI.Cscore
                         //get the color based on the fft band value
                         pen.Color = _colorCalculator.GetColor((float)p.Value);
 
-                        FirmataModule.SoundSpectrumColor = pen.Color;
+                        switch (dp)
+                        {
+                            case DrawPurpose.ForAnalog:
+                                FirmataModule.SoundSpectrumColor = pen.Color;
+                                break;
+                            case DrawPurpose.ForDigital:
+                                FirmataModule.DigitalSpectrumPattern[i] = pen.Color;
+                                break;
+                            case DrawPurpose.ForGeneric:
+                                break;
+                            default:
+                                break;
+                        }
+
 
                         var p1 = new PointF(xCoord, currentYOffset);
                         var p2 = new PointF(xCoord, currentYOffset - pointHeight);
