@@ -8,8 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-
+using System.Windows.Forms;
 
 namespace LedsGUI
 {
@@ -19,8 +18,6 @@ namespace LedsGUI
     {
         public bool Ready { get; private set; } = false;
         private bool isSendingCustomPalette = false;
-
-        const bool COMMOM_ANODE = true;
 
         const byte STRIP_DATA                        = 0x0F;
 
@@ -106,6 +103,9 @@ namespace LedsGUI
         private EnhancedSerialConnection connection;
         private ArduinoSession arduino;
 
+        private ToolStripStatusLabel _COMStatusLabel;
+        private ToolStripStatusLabel _MessageLabel;
+
         private Random random = new Random();
 
         public static Color SoundSpectrumColor = new Color();
@@ -146,24 +146,48 @@ namespace LedsGUI
             //implement cobrinha like pacman sugestao da neechan
         }
 
+        public void SetStatusLabel(ToolStripStatusLabel COM, ToolStripStatusLabel Message)
+        {
+            this._COMStatusLabel = COM;
+            this._MessageLabel = Message;
+        }
+
         public void FirmataSetup(String porta)
         {
-            if (arduino != null)
-            {
-                arduino.Clear();
-                arduino.Dispose();
-            }
-
             try
             {
+                if (arduino != null)
+                {
+                arduino.Clear();
+                arduino.Dispose();
+                }
+
                 connection = new EnhancedSerialConnection(porta, SerialBaudRate.Bps_9600);
                 arduino = new ArduinoSession(connection);
 
+                _COMStatusLabel.Text = porta;
+                _MessageLabel.Text = "Connected.";
+
                 Ready = true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _COMStatusLabel.Text = porta;
+                _MessageLabel.Text = e.Message;
 
+                Ready = false;
+            }
+        }
+
+        private void FirmataSerialWrite(byte[] buffer, int count)
+        {
+            try
+            {
+                connection.Write(buffer, 0, count);
+            }
+            catch (Exception e)
+            {
+                _MessageLabel.Text = e.Message;
             }
         }
 
@@ -171,6 +195,8 @@ namespace LedsGUI
         {
             Ready = false;
             if(arduino != null) arduino.Dispose();
+            _MessageLabel.Text = "Not Connected";
+            _COMStatusLabel.Text = "COM#";
         }
 
         public void SendDigitalCustomPalette(CustomPalette customPalette)
@@ -200,7 +226,7 @@ namespace LedsGUI
                 command[8] = (byte) (customPalette.PatternColors[i].B & 0x7F);
                 command[9] = (byte)((customPalette.PatternColors[i].B >> 7) & 0x7F);
 
-                connection.Write(command, 0, command.Length);
+                FirmataSerialWrite(command, command.Length);
             }
 
             command = new byte[8];
@@ -214,7 +240,7 @@ namespace LedsGUI
             command[6] = (byte) customPalette.paletteSize;
 
             command[7] = 0xF7;
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
 
 
             isSendingCustomPalette = false;
@@ -239,7 +265,7 @@ namespace LedsGUI
 
             command[9] = 0xF7;
 
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
 
         }
 
@@ -267,7 +293,8 @@ namespace LedsGUI
             command[14] = (byte)((DigitalSpectrumPattern[1].B >> 7) & 0x7F);
 
             command[15] = 0xF7;
-            connection.Write(command, 0, command.Length);
+
+            FirmataSerialWrite(command, command.Length);
         }
 
         public void SendDigitalMode(byte mode)
@@ -281,7 +308,7 @@ namespace LedsGUI
             command[3] = mode;
             command[4] = 0xF7;
 
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
         }
 
         public void SendDigitalSpeed(byte speed)
@@ -295,7 +322,7 @@ namespace LedsGUI
             command[3] = speed;
             command[4] = 0xF7;
 
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
         }
 
         public void SendDigitalBright(byte bright)
@@ -310,7 +337,7 @@ namespace LedsGUI
             command[4] = (byte)(bright >> 7);
             command[5] = 0xF7;
 
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
         }
 
         public void SendDigitalColor(Color color)
@@ -329,7 +356,7 @@ namespace LedsGUI
             command[8] = (byte)(color.B >> 7);
             command[9] = 0xF7;
 
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
         }
 
         public void SendAnalogMode(byte mode)
@@ -343,7 +370,7 @@ namespace LedsGUI
             command[3] = mode;
             command[4] = 0xF7;
 
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
         }
 
         public void SendAnalogSpeed(byte speed)
@@ -357,7 +384,7 @@ namespace LedsGUI
             command[3] = speed;
             command[4] = 0xF7;
 
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
         }
 
         public void SendAnalogBright(byte bright)
@@ -371,7 +398,7 @@ namespace LedsGUI
             command[3] = (byte)(bright >> 7);
             command[4] = 0xF7;
 
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
         }
 
         public void SendAnalogColor(Color color)
@@ -390,7 +417,7 @@ namespace LedsGUI
             command[8] = (byte)(color.B >> 7);
             command[9] = 0xF7;
 
-            connection.Write(command, 0, command.Length);
+            FirmataSerialWrite(command, command.Length);
         }
 
         public void Dispose()

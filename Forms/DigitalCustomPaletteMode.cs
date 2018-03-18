@@ -16,6 +16,7 @@ namespace LedsGUI
         XMLCustomPalettes xmlHandler;
 
         private FirmataModule _firmata { get; set; }
+        private CustomPalette _LastActivePalette { get; set; }
 
         private Button[] ColorsButtons = new Button[16];
         private TextBox[] RedTextBoxes = new TextBox[16];
@@ -23,7 +24,6 @@ namespace LedsGUI
         private TextBox[] BlueTextBoxes = new TextBox[16];
 
         private bool hasChanged = false;
-        private bool ignoreInternalCodeChange = false;
 
         #region Form Frame Stuff
 
@@ -35,6 +35,12 @@ namespace LedsGUI
         public void SetFirmata(FirmataModule firmata)
         {
             this._firmata = firmata;
+        }
+
+        public void SetLastActivatePalette(CustomPalette customPalette)
+        {
+            if (customPalette == null) return;
+            this._LastActivePalette = customPalette;
         }
 
         private void DigitalCustomPaletteMode_Load(object sender, EventArgs e)
@@ -212,7 +218,7 @@ namespace LedsGUI
             CustomPalette PaletteToSend = new CustomPalette("SentPalette", BackColors,
                                                             AnimateCheckBox.Checked, BlendCheckBox.Checked,
                                                             (byte)numericUpDown.Value, GetPaletteSize());
-            xmlHandler.AddPalette(PaletteToSend);
+            _LastActivePalette = PaletteToSend;
             _firmata.SendDigitalCustomPalette(PaletteToSend);
         }
 
@@ -356,10 +362,8 @@ namespace LedsGUI
 
         private void UpdateSavedCombobox()
         {
-            ignoreInternalCodeChange = true;
             comboBoxSavedPalettes.Items.Clear();
             comboBoxSavedPalettes.Items.AddRange(xmlHandler.LoadSavedPalettes().ToArray());
-            ignoreInternalCodeChange = false;
         }
 
         #endregion
@@ -367,6 +371,21 @@ namespace LedsGUI
         private void numericUpDown_ValueChanged(object sender, EventArgs e)
         {
             hasChanged = true;
+        }
+
+        private void BlendCheckBox_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (BlendCheckBox.CheckState == CheckState.Checked)
+                Palette256radioButton.Enabled = true;
+            else
+                Palette256radioButton.Enabled = false;
+        }
+
+        private void Palette256radioButton_EnabledChanged(object sender, EventArgs e)
+        {
+            if (Palette256radioButton.Enabled == false && 
+                Palette256radioButton.Checked == true)
+                Palette32radioButton.Checked = true;
         }
     }
 

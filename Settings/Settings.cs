@@ -26,6 +26,8 @@ namespace LedsGUI
         internal int AnalogSelectedModeIndex   { get; set; }
         internal int DigitalSelectedModeIndex { get; set; }
 
+        internal CustomPalette LastActivatedPalette { get; set; }
+
         internal Settings()
         {
             AnalogBackColors = new Dictionary<string, Color>();
@@ -40,8 +42,12 @@ namespace LedsGUI
 
         internal void Save(string fileName = @"LEDSGUIsettings.ini")
         {
-            using (FileStream stream = File.Create(Environment.GetFolderPath(Environment.SpecialFolder
-                .LocalApplicationData) + "\\" + fileName))
+            string FolderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LEDsGUI\\";
+
+            if (!System.IO.Directory.Exists(FolderPath))
+                System.IO.Directory.CreateDirectory(FolderPath);
+
+            using (FileStream stream = File.Create(FolderPath + fileName))
             {
                 BinaryFormatter serializer = new BinaryFormatter();
                 serializer.Serialize(stream, this);
@@ -50,9 +56,14 @@ namespace LedsGUI
 
         internal static Settings Load(string fileName = @"LEDSGUIsettings.ini")
         {
-            if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + fileName))
+            string FolderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LEDsGUI\\";
+
+            if (!System.IO.Directory.Exists(FolderPath))
+                System.IO.Directory.CreateDirectory(FolderPath);
+
+            if (!File.Exists(FolderPath + fileName))
                 return null;
-            using (FileStream stream = File.OpenRead(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + fileName))
+            using (FileStream stream = File.OpenRead(FolderPath + fileName))
             {
                 BinaryFormatter serializer = new BinaryFormatter();
                 return serializer.Deserialize(stream) as Settings;

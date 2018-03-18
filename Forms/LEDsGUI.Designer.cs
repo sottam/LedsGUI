@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LedsGUI.CustomComponents;
+using System;
 using System.ComponentModel;
 
 namespace LedsGUI
@@ -45,6 +46,7 @@ namespace LedsGUI
             this.TrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.TrayContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.arduinoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showSketchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.visualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -69,7 +71,6 @@ namespace LedsGUI
             this.AnalogBrightScroll = new System.Windows.Forms.TrackBar();
             this.AnalogSpeedScroll = new System.Windows.Forms.TrackBar();
             this.Analog = new System.Windows.Forms.Label();
-            this.AnalogCustomPrincipal = new LedsGUI.DoubleClickButton();
             this.AnalogComboBox = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
@@ -85,11 +86,15 @@ namespace LedsGUI
             this.DigitalBrightScroll = new System.Windows.Forms.TrackBar();
             this.DigitalSpeedScroll = new System.Windows.Forms.TrackBar();
             this.label11 = new System.Windows.Forms.Label();
-            this.DigitalCustomPrincipal = new LedsGUI.DoubleClickButton();
             this.DigitalComboBox = new System.Windows.Forms.ComboBox();
             this.statusBar = new System.Windows.Forms.StatusStrip();
             this.VisualizationTimer = new System.Windows.Forms.Timer(this.components);
             this.StartUpWorker = new System.ComponentModel.BackgroundWorker();
+            this.TempWorker = new System.ComponentModel.BackgroundWorker();
+            this.AnalogCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
+            this.DigitalCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
+            this.ComPortStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.MessageStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TrayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -103,6 +108,7 @@ namespace LedsGUI
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DigitalBrightScroll)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DigitalSpeedScroll)).BeginInit();
+            this.statusBar.SuspendLayout();
             this.SuspendLayout();
             // 
             // TrayIcon
@@ -118,6 +124,7 @@ namespace LedsGUI
             // 
             this.TrayContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.arduinoToolStripMenuItem,
+            this.showSketchToolStripMenuItem,
             this.toolStripSeparator1,
             this.visualizationToolStripMenuItem,
             this.toolStripSeparator2,
@@ -126,7 +133,7 @@ namespace LedsGUI
             this.desativarToolStripMenuItem,
             this.fecharToolStripMenuItem});
             this.TrayContextMenu.Name = "contextMenuStrip1";
-            this.TrayContextMenu.Size = new System.Drawing.Size(166, 148);
+            this.TrayContextMenu.Size = new System.Drawing.Size(166, 170);
             this.TrayContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.TrayContextMenu_Opening);
             // 
             // arduinoToolStripMenuItem
@@ -134,6 +141,13 @@ namespace LedsGUI
             this.arduinoToolStripMenuItem.Name = "arduinoToolStripMenuItem";
             this.arduinoToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.arduinoToolStripMenuItem.Text = "Arduino";
+            // 
+            // showSketchToolStripMenuItem
+            // 
+            this.showSketchToolStripMenuItem.Name = "showSketchToolStripMenuItem";
+            this.showSketchToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.showSketchToolStripMenuItem.Text = "Show Sketch";
+            this.showSketchToolStripMenuItem.Click += new System.EventHandler(this.showSketchToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -379,7 +393,7 @@ namespace LedsGUI
             // AnalogSpeedScroll
             // 
             this.AnalogSpeedScroll.Location = new System.Drawing.Point(11, 121);
-            this.AnalogSpeedScroll.Maximum = 50;
+            this.AnalogSpeedScroll.Maximum = 100;
             this.AnalogSpeedScroll.Minimum = 1;
             this.AnalogSpeedScroll.Name = "AnalogSpeedScroll";
             this.AnalogSpeedScroll.Size = new System.Drawing.Size(240, 45);
@@ -397,18 +411,6 @@ namespace LedsGUI
             this.Analog.TabIndex = 1;
             this.Analog.Text = "Analog Strip";
             this.Analog.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // AnalogCustomPrincipal
-            // 
-            this.AnalogCustomPrincipal.Location = new System.Drawing.Point(12, 76);
-            this.AnalogCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
-            this.AnalogCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
-            this.AnalogCustomPrincipal.Name = "AnalogCustomPrincipal";
-            this.AnalogCustomPrincipal.Size = new System.Drawing.Size(35, 35);
-            this.AnalogCustomPrincipal.TabIndex = 0;
-            this.AnalogCustomPrincipal.UseVisualStyleBackColor = true;
-            this.AnalogCustomPrincipal.DoubleClick += new System.EventHandler(this.AnalogCustomPrincipal_DoubleClick);
-            this.AnalogCustomPrincipal.Click += new System.EventHandler(this.AnalogCustomPrincipal_Click);
             // 
             // AnalogComboBox
             // 
@@ -571,7 +573,7 @@ namespace LedsGUI
             // DigitalSpeedScroll
             // 
             this.DigitalSpeedScroll.Location = new System.Drawing.Point(7, 121);
-            this.DigitalSpeedScroll.Maximum = 50;
+            this.DigitalSpeedScroll.Maximum = 100;
             this.DigitalSpeedScroll.Minimum = 1;
             this.DigitalSpeedScroll.Name = "DigitalSpeedScroll";
             this.DigitalSpeedScroll.Size = new System.Drawing.Size(240, 45);
@@ -590,18 +592,6 @@ namespace LedsGUI
             this.label11.Text = "Digital Strip";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // DigitalCustomPrincipal
-            // 
-            this.DigitalCustomPrincipal.Location = new System.Drawing.Point(8, 76);
-            this.DigitalCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
-            this.DigitalCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
-            this.DigitalCustomPrincipal.Name = "DigitalCustomPrincipal";
-            this.DigitalCustomPrincipal.Size = new System.Drawing.Size(35, 35);
-            this.DigitalCustomPrincipal.TabIndex = 8;
-            this.DigitalCustomPrincipal.UseVisualStyleBackColor = true;
-            this.DigitalCustomPrincipal.DoubleClick += new System.EventHandler(this.DigitalCustomPrincipal_DoubleClick);
-            this.DigitalCustomPrincipal.Click += new System.EventHandler(this.DigitalCustomPrincipal_Click);
-            // 
             // DigitalComboBox
             // 
             this.DigitalComboBox.FormattingEnabled = true;
@@ -613,6 +603,9 @@ namespace LedsGUI
             // 
             // statusBar
             // 
+            this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ComPortStatusLabel,
+            this.MessageStatusLabel});
             this.statusBar.Location = new System.Drawing.Point(0, 205);
             this.statusBar.Name = "statusBar";
             this.statusBar.Size = new System.Drawing.Size(517, 22);
@@ -628,6 +621,42 @@ namespace LedsGUI
             // 
             this.StartUpWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.StartUpWorker_DoWork);
             this.StartUpWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.SetStartUpWorker_RunWorkerCompleted);
+            // 
+            // AnalogCustomPrincipal
+            // 
+            this.AnalogCustomPrincipal.Location = new System.Drawing.Point(12, 76);
+            this.AnalogCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
+            this.AnalogCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
+            this.AnalogCustomPrincipal.Name = "AnalogCustomPrincipal";
+            this.AnalogCustomPrincipal.Size = new System.Drawing.Size(35, 35);
+            this.AnalogCustomPrincipal.TabIndex = 0;
+            this.AnalogCustomPrincipal.UseVisualStyleBackColor = true;
+            this.AnalogCustomPrincipal.DoubleClick += new System.EventHandler(this.AnalogCustomPrincipal_DoubleClick);
+            this.AnalogCustomPrincipal.Click += new System.EventHandler(this.AnalogCustomPrincipal_Click);
+            // 
+            // DigitalCustomPrincipal
+            // 
+            this.DigitalCustomPrincipal.Location = new System.Drawing.Point(8, 76);
+            this.DigitalCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
+            this.DigitalCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
+            this.DigitalCustomPrincipal.Name = "DigitalCustomPrincipal";
+            this.DigitalCustomPrincipal.Size = new System.Drawing.Size(35, 35);
+            this.DigitalCustomPrincipal.TabIndex = 8;
+            this.DigitalCustomPrincipal.UseVisualStyleBackColor = true;
+            this.DigitalCustomPrincipal.DoubleClick += new System.EventHandler(this.DigitalCustomPrincipal_DoubleClick);
+            this.DigitalCustomPrincipal.Click += new System.EventHandler(this.DigitalCustomPrincipal_Click);
+            // 
+            // ComPortStatusLabel
+            // 
+            this.ComPortStatusLabel.Name = "ComPortStatusLabel";
+            this.ComPortStatusLabel.Size = new System.Drawing.Size(42, 17);
+            this.ComPortStatusLabel.Text = "COM#";
+            // 
+            // MessageStatusLabel
+            // 
+            this.MessageStatusLabel.Name = "MessageStatusLabel";
+            this.MessageStatusLabel.Size = new System.Drawing.Size(53, 17);
+            this.MessageStatusLabel.Text = "Message";
             // 
             // LedController
             // 
@@ -668,6 +697,8 @@ namespace LedsGUI
             this.tableLayoutPanel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DigitalBrightScroll)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DigitalSpeedScroll)).EndInit();
+            this.statusBar.ResumeLayout(false);
+            this.statusBar.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -681,7 +712,7 @@ namespace LedsGUI
         private System.Windows.Forms.ToolStripMenuItem desativarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fecharToolStripMenuItem;
         private System.Windows.Forms.Timer SoundSpectrumTimer;
-        private              LedsGUI.DoubleClickButton AnalogCustomPrincipal;
+        private LedsGUI.CustomComponents.DoubleClickButton AnalogCustomPrincipal;
         private System.Windows.Forms.ToolStripMenuItem arduinoToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem StartUpWithWindows;
@@ -722,6 +753,10 @@ namespace LedsGUI
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.Timer VisualizationTimer;
         private System.ComponentModel.BackgroundWorker StartUpWorker;
+        private System.Windows.Forms.ToolStripMenuItem showSketchToolStripMenuItem;
+        private BackgroundWorker TempWorker;
+        private System.Windows.Forms.ToolStripStatusLabel ComPortStatusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel MessageStatusLabel;
     }
 }
 

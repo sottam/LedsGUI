@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace LedsGUI
 {
+    [Serializable]
     public class CustomPalette
     {
         public enum PaletteSize { P16, P32, P256 };

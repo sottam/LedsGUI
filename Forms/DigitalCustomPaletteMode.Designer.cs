@@ -442,6 +442,7 @@
             this.BlendCheckBox.TabIndex = 6;
             this.BlendCheckBox.Text = "Blend";
             this.BlendCheckBox.UseVisualStyleBackColor = true;
+            this.BlendCheckBox.CheckStateChanged += new System.EventHandler(this.BlendCheckBox_CheckStateChanged);
             this.BlendCheckBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.BlendCheckBox_MouseClick);
             // 
             // AnimateCheckBox
@@ -543,6 +544,7 @@
             this.Palette256radioButton.TabStop = true;
             this.Palette256radioButton.Text = "Palette 256";
             this.Palette256radioButton.UseVisualStyleBackColor = true;
+            this.Palette256radioButton.EnabledChanged += new System.EventHandler(this.Palette256radioButton_EnabledChanged);
             // 
             // PalettePreviewerPictureBox
             // 

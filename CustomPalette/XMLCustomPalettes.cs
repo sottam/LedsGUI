@@ -11,15 +11,24 @@ namespace LedsGUI
 {
     class XMLCustomPalettes
     {
-        private readonly string xmlPath = "SavedCustomPalettes.xml";
+        private string xmlPath;
+        private string FolderPath;
 
         XElement xml;
 
         public XMLCustomPalettes()
         {
-            if(File.Exists(xmlPath))
+            
+            FolderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LEDsGUI\\";
+            xmlPath = FolderPath + "SavedCustomPalettes.xml";
+
+            bool exists = System.IO.Directory.Exists(FolderPath);
+
+            if (!exists)
+                System.IO.Directory.CreateDirectory(FolderPath);
+
+            if (File.Exists(xmlPath))
             {
-                //document = XDocument.Load(xmlPath);
                 xml = XElement.Load(xmlPath);
             }
             else

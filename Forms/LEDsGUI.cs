@@ -9,6 +9,7 @@ namespace LedsGUI
 {
     public partial class LedController : Form
     {
+        #region fields
 
         ComponentResourceManager resources = new ComponentResourceManager(typeof(LedController));
 
@@ -38,7 +39,12 @@ namespace LedsGUI
         private DigitalMusicalMode DigitalMusicalModeForm = new DigitalMusicalMode();
         private DigitalCustomPaletteMode DigitalCustomPaletteMode = new DigitalCustomPaletteMode();
 
-        //Save and Restore Methods
+        private CustomPalette LastActivatedPalette;
+
+        #endregion
+
+        #region Save and load stored configs
+
         private void LoadConfigs()
         {
             try
@@ -82,6 +88,9 @@ namespace LedsGUI
                     firmata.DigitalModesAvailable[i].Speed = s.DigitalModesAvailable[i].Speed;
                     firmata.DigitalModesAvailable[i].Bright = s.DigitalModesAvailable[i].Bright;
                 }
+
+                if (s.LastActivatedPalette != null)
+                    LastActivatedPalette = s.LastActivatedPalette;
             }
             catch (Exception e )
             {
@@ -94,14 +103,11 @@ namespace LedsGUI
             try
             {
                 Settings s = new Settings();
-                foreach (Control item in AnalogCustomButtons)
-                {              
+                foreach (Control item in AnalogCustomButtons)            
                     s.AnalogBackColors.Add(item.Name, item.BackColor);
-                }
+
                 foreach (Control item in DigitalCustomButtons)
-                {
                     s.DigitalBackColors.Add(item.Name, item.BackColor);
-                }
 
                 s.AnalogModesAvailable = firmata.AnalogModesAvailable;
                 s.DigitalModesAvailable = firmata.DigitalModesAvailable;
@@ -114,16 +120,21 @@ namespace LedsGUI
                 s.AnalogSelectedModeIndex = AnalogComboBox.SelectedIndex;
                 s.DigitalSelectedModeIndex = DigitalComboBox.SelectedIndex;
 
+                if (s.LastActivatedPalette != null)
+                    s.LastActivatedPalette = LastActivatedPalette;
+
                 s.Save();
             }
             catch (Exception e )
             {
-
                 Console.WriteLine("Ërro ao Salvar configs: " + e.Message);
             }
         }
 
-        //form Principal
+        #endregion
+
+        #region Form related stuff
+
         public LedController()
         {
             InitializeComponent();
@@ -135,7 +146,6 @@ namespace LedsGUI
             AnalogCustomButtons[1] = AnalogLastCustom2;
             AnalogCustomButtons[2] = AnalogLastCustom3;
             AnalogCustomButtons[3] = AnalogLastCustom4;
-
             AnalogCustomButtons[4] = AnalogLastCustom5;
             AnalogCustomButtons[5] = AnalogLastCustom6;
 
@@ -143,7 +153,6 @@ namespace LedsGUI
             DigitalCustomButtons[1] = DigitalLastCustom2;
             DigitalCustomButtons[2] = DigitalLastCustom3;
             DigitalCustomButtons[3] = DigitalLastCustom4;
-
             DigitalCustomButtons[4] = DigitalLastCustom5;
             DigitalCustomButtons[5] = DigitalLastCustom6;
 
@@ -162,6 +171,9 @@ namespace LedsGUI
 
             firmata = new FirmataModule();
             DigitalCustomPaletteMode.SetFirmata(firmata);
+            DigitalCustomPaletteMode.SetLastActivatePalette(LastActivatedPalette);
+
+            firmata.SetStatusLabel(ComPortStatusLabel, MessageStatusLabel);
 
             foreach (FirmataMode mode in firmata.AnalogModesAvailable)
                 AnalogComboBox.Items.Add(mode);
@@ -187,7 +199,25 @@ namespace LedsGUI
                 firmata.FirmataSetup(SelectedComPort);
                 AnalogComboBox_SelectedIndexChanged(AnalogComboBox, EventArgs.Empty);
                 DigitalComboBox_SelectedIndexChanged(DigitalComboBox, EventArgs.Empty);
+                
+                TempWorker.DoWork += TempWorker_DoWork;
+                TempWorker.RunWorkerAsync();
             }
+
+            //this piece of is here to 
+            //make the this form hidden to ALT-TAB
+            Form form1 = new Form();
+            form1.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            form1.ShowInTaskbar = false;
+            this.Owner = form1;
+        }
+
+        private void TempWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            //sleep time to guarantee that the saved config are, in fact, loaded
+            System.Threading.Thread.Sleep(3000);
+            AnalogComboBox_SelectedIndexChanged(AnalogComboBox, EventArgs.Empty);
+            DigitalComboBox_SelectedIndexChanged(DigitalComboBox, EventArgs.Empty);
         }
 
         private void Visualization_VisibleChanged(object sender, EventArgs e)
@@ -207,10 +237,21 @@ namespace LedsGUI
 
         private void LedController_FormClosing(object sender, FormClosingEventArgs e)
         {
-            const string message = "Are you sure to exit?";
-            const string caption = "Confirm exit";
-            var result = MessageBox.Show(this, message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            e.Cancel = (result == DialogResult.No);
+            //it was blocking windows from shutdown,
+            //even if it dont show the message box
+            //no reason why
+            /*
+            if (e.CloseReason == CloseReason.WindowsShutDown)
+                return;
+
+            if(e.CloseReason == CloseReason.UserClosing)
+            {
+                const string message = "Are you sure to exit?";
+                const string caption = "Confirm exit";
+                var result = MessageBox.Show(this, message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                e.Cancel = (result == DialogResult.No);
+            }
+            */
         }
 
         private void LedController_FormClosed(object sender, FormClosedEventArgs e)
@@ -223,18 +264,26 @@ namespace LedsGUI
 
         private void LedController_Resize(object sender, EventArgs e)
         {
+
+            
             if (this.WindowState == FormWindowState.Minimized)
             {
+                //this.Hide();
                 this.ShowInTaskbar = false;
             }
         }
 
-        //tray icon and Context
+        #endregion
+
+        #region tray icon and tray context menu
+
         private void ContextMenuItemPort_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             SelectedComPort = item.Text;
             firmata.FirmataSetup(SelectedComPort);
+
+            if (LastActivatedPalette != null) firmata.SendDigitalCustomPalette(LastActivatedPalette);
 
             AnalogComboBox_SelectedIndexChanged(AnalogComboBox, EventArgs.Empty);
             DigitalComboBox_SelectedIndexChanged(DigitalComboBox, EventArgs.Empty);
@@ -269,6 +318,7 @@ namespace LedsGUI
         private void maximizarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Normal;
+            //this.Show();
 
             //positions the window above the tray icon
             this.Left = Cursor.Position.X - this.Width/2;
@@ -280,13 +330,15 @@ namespace LedsGUI
         private void TrayIcon_DoubleClick(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Normal;
+            
 
             //positions the window above the tray icon
             this.Left = Cursor.Position.X - this.Width / 2;
             this.Top = Screen.PrimaryScreen.WorkingArea.Bottom - this.Height;
 
+            //this.Show();
             this.ShowInTaskbar = true;
-
+            
             this.Activate();
         }
 
@@ -306,7 +358,40 @@ namespace LedsGUI
             Dispose();
         }
 
-        //cscore inicio
+        private void StartUpWithWindows_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.AppStarting;
+            if (StartUpWorker.IsBusy == false)
+                StartUpWorker.RunWorkerAsync();
+        }
+
+        private void SetStartUpWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void StartUpWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            //if it is checked before click, 
+            //it will return unchecked
+            //when handling this event
+            if (!StartUpWithWindows.Checked)
+                StartupManager.RemoveApplicationFromStartup();
+            else
+                StartupManager.AddApplicationToStartup();
+        }
+
+        private void showSketchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowSketch showSketch = new ShowSketch();
+            showSketch.Show();
+        }
+
+        #endregion
+
+        #region CSCORE
+
+        //analog visualization
         public void GenerateLineSpectrum()
         {
             Image image = MusicalModeForm.SoundBars.Image;
@@ -418,39 +503,17 @@ namespace LedsGUI
             }
         }
 
-        //cscore fim
-
-        private void UpdateAnalogCustomButtons()
-        {
-            int i = 0;
-            foreach (Color c in AnalogCustomColors)
-            {
-                AnalogCustomButtons[i].BackColor = c;
-                i++;
-            }
-        }
-
-        private void UpdateDigitalCustomButtons()
-        {
-            int i = 0;
-            foreach (Color c in DigitalCustomColors)
-            {
-                DigitalCustomButtons[i].BackColor = c;
-                i++;
-            }
-        }
-
         //Timers Tick Event Methods
         private void SoundSpectrum_Tick(object sender, EventArgs e)
         {
-            if(AnalogComboBox.SelectedIndex != 5 && DigitalComboBox.SelectedIndex != 6)
+            if (AnalogComboBox.SelectedIndex != 5 && DigitalComboBox.SelectedIndex != 6)
             {
                 SoundSpectrumTimer.Stop();
-                if(visualization.Visible == false) cscore.Listen(false);
+                if (visualization.Visible == false) cscore.Listen(false);
                 return;
             }
             if (AnalogComboBox.SelectedIndex == 5) //musical mode analog
-            {   
+            {
                 //render
                 GenerateLineSpectrum();
                 GenerateVoice3DPrintSpectrum();
@@ -474,11 +537,13 @@ namespace LedsGUI
             generic_GenerateVoice3DPrintSpectrum();
         }
 
-        //combobox handlers aka change mode handlers
+        #endregion
+
+        #region Analog stuff
+
         private void AnalogComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             FirmataMode AnalogMode = AnalogComboBox.SelectedItem as FirmataMode;
-            FirmataMode DigitalMode = DigitalComboBox.SelectedItem as FirmataMode;
 
             UpdateAnalogButtons(AnalogMode);
 
@@ -487,61 +552,25 @@ namespace LedsGUI
             firmata.SendAnalogBright((byte)AnalogMode.Bright);
             firmata.SendAnalogColor(AnalogCustomPrincipal.BackColor);
 
-            if(AnalogMode.Name == "Musical")
+            if (AnalogMode.Name == "Musical")
             {
                 cscore.Listen(true);
                 SoundSpectrumTimer.Start();
             }
         }
 
-        private void DigitalComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            FirmataMode AnalogMode = AnalogComboBox.SelectedItem as FirmataMode;
-            FirmataMode DigitalMode = DigitalComboBox.SelectedItem as FirmataMode;
-
-            UpdateDigitalButtons(DigitalMode);
-
-            firmata.SendDigitalMode((byte)DigitalMode.ModeNumber);
-            firmata.SendDigitalSpeed((byte)DigitalMode.Speed);
-            firmata.SendDigitalBright((byte)DigitalMode.Bright);
-            firmata.SendDigitalColor(DigitalCustomPrincipal.BackColor);
-
-
-            if (DigitalMode.Name == "Musical")
-            {
-                cscore.Listen(true);
-                SoundSpectrumTimer.Start();
-            }
-        }
-        //More button Handlers
         private void AnalogMoreButton_Click(object sender, EventArgs e)
         {
-            if((AnalogComboBox.SelectedItem as FirmataMode).moreMode == FirmataMode.MoreMode.analogMusical)
+            if ((AnalogComboBox.SelectedItem as FirmataMode).moreMode == FirmataMode.MoreMode.analogMusical)
             {
-                MusicalModeForm.Left = this.Location.X ; 
-                MusicalModeForm.Top = this.Location.Y - this.Height / 3; 
+                MusicalModeForm.Left = this.Location.X;
+                MusicalModeForm.Top = this.Location.Y - this.Height / 3;
                 MusicalModeForm.Show();
                 MusicalModeForm.Activate();
             }
 
         }
 
-        private void DigitalMoreButton_Click(object sender, EventArgs e)
-        {
-            if ((DigitalComboBox.SelectedItem as FirmataMode).moreMode == FirmataMode.MoreMode.digitalMusical)
-            {
-                DigitalMusicalModeForm.Left = this.Location.X;
-                DigitalMusicalModeForm.Top = this.Location.Y - this.Height / 3;
-                DigitalMusicalModeForm.Show();
-                DigitalMusicalModeForm.Activate();
-            }
-            else if((DigitalComboBox.SelectedItem as FirmataMode).moreMode == FirmataMode.MoreMode.digitalCustomPattern)
-            {
-                DigitalCustomPaletteMode.Show();
-                DigitalCustomPaletteMode.Activate();
-            }
-        }
-        //Custom Color Handlers
         private void AnalogCustomPrincipal_Click(object sender, EventArgs e)
         {
             if (AnalogCustomPrincipal.BackColor.Equals(Color.Transparent) == false)
@@ -572,9 +601,107 @@ namespace LedsGUI
             }
         }
 
+        private void AnalogSpeedScroll_Scroll(object sender, EventArgs e)
+        {
+            TrackBar current = sender as TrackBar;
+            FirmataMode mode = AnalogComboBox.SelectedItem as FirmataMode;
+            mode.Speed = (byte)current.Value;
+            firmata.SendAnalogSpeed((Byte)current.Value);
+        }
+
+        private void AnalogBrightScroll_Scroll(object sender, EventArgs e)
+        {
+            TrackBar current = sender as TrackBar;
+            FirmataMode mode = AnalogComboBox.SelectedItem as FirmataMode;
+            mode.Bright = (byte)current.Value;
+            firmata.SendAnalogBright((Byte)current.Value);
+        }
+
+        private void UpdateAnalogButtons(FirmataMode mode)
+        {
+            if (mode.moreMode == FirmataMode.MoreMode.none)
+                AnalogMoreButton.Enabled = false;
+            else
+                AnalogMoreButton.Enabled = true;
+
+            if (mode.UseColor)
+            {
+                AnalogCustomPrincipal.Enabled = true;
+                AnalogLastGroupCustomColors.Enabled = true;
+            }
+            else
+            {
+                AnalogCustomPrincipal.Enabled = false;
+                AnalogLastGroupCustomColors.Enabled = false;
+            }
+
+            if (mode.UseSpeed)
+                AnalogSpeedScroll.Enabled = true;
+            else
+                AnalogSpeedScroll.Enabled = false;
+
+            if (mode.UseBright)
+                AnalogBrightScroll.Enabled = true;
+            else
+                AnalogBrightScroll.Enabled = false;
+
+            //update values
+            AnalogSpeedScroll.Value = mode.Speed;
+            AnalogBrightScroll.Value = mode.Bright;
+        }
+
+        private void UpdateAnalogCustomButtons()
+        {
+            int i = 0;
+            foreach (Color c in AnalogCustomColors)
+            {
+                AnalogCustomButtons[i].BackColor = c;
+                i++;
+            }
+        }
+
+        #endregion
+
+        #region Digital stuff
+
+        private void DigitalComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FirmataMode DigitalMode = DigitalComboBox.SelectedItem as FirmataMode;
+
+            UpdateDigitalButtons(DigitalMode);
+
+            firmata.SendDigitalMode((byte)DigitalMode.ModeNumber);
+            firmata.SendDigitalSpeed((byte)DigitalMode.Speed);
+            firmata.SendDigitalBright((byte)DigitalMode.Bright);
+            firmata.SendDigitalColor(DigitalCustomPrincipal.BackColor);
+
+
+            if (DigitalMode.Name == "Musical")
+            {
+                cscore.Listen(true);
+                SoundSpectrumTimer.Start();
+            }
+        }
+
+        private void DigitalMoreButton_Click(object sender, EventArgs e)
+        {
+            if ((DigitalComboBox.SelectedItem as FirmataMode).moreMode == FirmataMode.MoreMode.digitalMusical)
+            {
+                DigitalMusicalModeForm.Left = this.Location.X;
+                DigitalMusicalModeForm.Top = this.Location.Y - this.Height / 3;
+                DigitalMusicalModeForm.Show();
+                DigitalMusicalModeForm.Activate();
+            }
+            else if ((DigitalComboBox.SelectedItem as FirmataMode).moreMode == FirmataMode.MoreMode.digitalCustomPattern)
+            {
+                DigitalCustomPaletteMode.Show();
+                DigitalCustomPaletteMode.Activate();
+            }
+        }
+
         private void DigitalCustomPrincipal_Click(object sender, EventArgs e)
-        { 
-           
+        {
+
             if (DigitalCustomPrincipal.BackColor.Equals(Color.Transparent) == false)
                 firmata.SendDigitalColor(DigitalCustomPrincipal.BackColor);
         }
@@ -617,55 +744,6 @@ namespace LedsGUI
             firmata.SendDigitalBright((byte)current.Value);
         }
 
-        private void AnalogSpeedScroll_Scroll(object sender, EventArgs e)
-        {
-            TrackBar current = sender as TrackBar;
-            FirmataMode mode = AnalogComboBox.SelectedItem as FirmataMode;
-            mode.Speed = (byte)current.Value;
-            firmata.SendAnalogSpeed((Byte)current.Value);
-        }
-
-        private void AnalogBrightScroll_Scroll(object sender, EventArgs e)
-        {
-            TrackBar current = sender as TrackBar;
-            FirmataMode mode = AnalogComboBox.SelectedItem as FirmataMode;
-            mode.Bright = (byte)current.Value;
-            firmata.SendAnalogBright((Byte)current.Value);
-        }
-
-        private void UpdateAnalogButtons(FirmataMode mode)
-        {
-            if (mode.moreMode == FirmataMode.MoreMode.none)
-                AnalogMoreButton.Enabled = false;
-            else
-                AnalogMoreButton.Enabled = true;
-
-            if(mode.UseColor)
-            {
-                AnalogCustomPrincipal.Enabled = true;
-                AnalogLastGroupCustomColors.Enabled = true;
-            }
-            else
-            {
-                AnalogCustomPrincipal.Enabled = false;
-                AnalogLastGroupCustomColors.Enabled = false;
-            }
-
-            if (mode.UseSpeed)
-                AnalogSpeedScroll.Enabled = true;
-            else
-                AnalogSpeedScroll.Enabled = false;
-
-            if (mode.UseBright)
-                AnalogBrightScroll.Enabled = true;
-            else
-                AnalogBrightScroll.Enabled = false;
-
-            //update values
-            AnalogSpeedScroll.Value = mode.Speed;
-            AnalogBrightScroll.Value = mode.Bright;
-        }
-
         private void UpdateDigitalButtons(FirmataMode mode)
         {
             if (mode.moreMode == FirmataMode.MoreMode.none)
@@ -699,27 +777,18 @@ namespace LedsGUI
             DigitalBrightScroll.Value = mode.Bright;
         }
 
-        private void StartUpWithWindows_Click(object sender, EventArgs e)
+        private void UpdateDigitalCustomButtons()
         {
-            Cursor.Current = Cursors.AppStarting;
-            if(StartUpWorker.IsBusy == false)
-                StartUpWorker.RunWorkerAsync();
+            int i = 0;
+            foreach (Color c in DigitalCustomColors)
+            {
+                DigitalCustomButtons[i].BackColor = c;
+                i++;
+            }
         }
 
-        private void SetStartUpWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            Cursor.Current = Cursors.Default;
-        }
+        #endregion
 
-        private void StartUpWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            //if it is checked before click, 
-            //it will return unchecked
-            //when handling this event
-            if (!StartUpWithWindows.Checked)
-                StartupManager.RemoveApplicationFromStartup();
-            else
-                StartupManager.AddApplicationToStartup();
-        }
+
     }
 }
