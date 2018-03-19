@@ -493,12 +493,23 @@ namespace LedsGUI
             {
                 DigitalMusicalModeForm.DigitalSoundSpectrum.Image = null;
 
-                if (cscore._DigitalvoicePrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_d.Width, _bitmap_d.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigital, 3))
+                if (cscore._DigitalBassPrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_d.Width, 
+                    _bitmap_d.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigitalBass, 3))
                 {
                     _xpos_d += 1;
                     if (_xpos_d >= _bitmap_d.Width)
                         _xpos_d = 0;
                 }
+
+                cscore._DigitalMedioPrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_d.Width,
+                    _bitmap_d.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigitalMedio, 3);
+
+
+                cscore._DigitaltreblePrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_d.Width, 
+                    _bitmap_d.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigitalTreble, 3);
+                
+                   
+
                 DigitalMusicalModeForm.DigitalSoundSpectrum.Image = _bitmap_d;
             }
         }

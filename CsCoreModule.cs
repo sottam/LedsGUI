@@ -30,8 +30,11 @@ namespace LedsGUI
         public VoicePrint3DSpectrum _voicePrint3DSpectrum; //analog
 
         public LineSpectrum _DigitallineSpectrum; //digital
-        public VoicePrint3DSpectrum _DigitalvoicePrint3DSpectrum; //digital
 
+        public VoicePrint3DSpectrum _DigitalBassPrint3DSpectrum;
+        //public VoicePrint3DSpectrum _DigitalvoicePrint3DSpectrum; //digital
+        public VoicePrint3DSpectrum _DigitalMedioPrint3DSpectrum;
+        public VoicePrint3DSpectrum _DigitaltreblePrint3DSpectrum;
         public LineSpectrum _GenericlineSpectrum; //generic
         public VoicePrint3DSpectrum _GenericvoicePrint3DSpectrum; //generic
 
@@ -153,15 +156,40 @@ namespace LedsGUI
                 ScalingStrategy = ScalingStrategy.Sqrt
             };
 
-            _DigitalvoicePrint3DSpectrum = new VoicePrint3DSpectrum(fftSize)
+            _DigitalBassPrint3DSpectrum = new VoicePrint3DSpectrum(fftSize)
             {
+                Colors = new Color[2] { Color.Black, Color.Red },
                 SpectrumProvider = spectrumProvider,
                 UseAverage = true,
-                PointCount = 2,
+                PointCount = 1,
                 IsXLogScale = false,
                 ScalingStrategy = ScalingStrategy.Linear,
                 MaximumFrequency = 250,
                 MinimumFrequency = 20
+            };
+
+            _DigitalMedioPrint3DSpectrum = new VoicePrint3DSpectrum(fftSize)
+            {
+                Colors = new Color[2] { Color.Black, Color.Green },
+                SpectrumProvider = spectrumProvider,
+                UseAverage = true,
+                PointCount = 1,
+                IsXLogScale = false,
+                ScalingStrategy = ScalingStrategy.Linear,
+                MaximumFrequency = 5000,
+                MinimumFrequency = 250
+            };
+
+            _DigitaltreblePrint3DSpectrum = new VoicePrint3DSpectrum(fftSize)
+            {
+                Colors = new Color[2] { Color.Black, Color.Blue },
+                SpectrumProvider = spectrumProvider,
+                UseAverage = true,
+                PointCount = 1,
+                IsXLogScale = false,
+                ScalingStrategy = ScalingStrategy.Linear,
+                MaximumFrequency = 20000,
+                MinimumFrequency = 5000
             };
 
             _GenericlineSpectrum = new LineSpectrum(fftSize)

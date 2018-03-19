@@ -280,19 +280,14 @@ namespace LedsGUI
 
             command[3] = (byte)(DigitalSpectrumPattern[0].R & 0x7F);
             command[4] = (byte)((DigitalSpectrumPattern[0].R >> 7) & 0x7F);
-            command[5] = (byte)(DigitalSpectrumPattern[0].G & 0x7F);
-            command[6] = (byte)((DigitalSpectrumPattern[0].G >> 7) & 0x7F);
-            command[7] = (byte)(DigitalSpectrumPattern[0].B & 0x7F);
-            command[8] = (byte)((DigitalSpectrumPattern[0].B >> 7) & 0x7F);
 
-            command[9] = (byte)(DigitalSpectrumPattern[1].R & 0x7F);
-            command[10] = (byte)((DigitalSpectrumPattern[1].R >> 7) & 0x7F);
-            command[11] = (byte)(DigitalSpectrumPattern[1].G & 0x7F);
-            command[12] = (byte)((DigitalSpectrumPattern[1].G >> 7) & 0x7F);
-            command[13] = (byte)(DigitalSpectrumPattern[1].B & 0x7F);
-            command[14] = (byte)((DigitalSpectrumPattern[1].B >> 7) & 0x7F);
+            command[5] = (byte)(DigitalSpectrumPattern[1].G & 0x7F);
+            command[6] = (byte)((DigitalSpectrumPattern[1].G >> 7) & 0x7F);
 
-            command[15] = 0xF7;
+            command[7] = (byte)(DigitalSpectrumPattern[2].B & 0x7F);
+            command[8] = (byte)((DigitalSpectrumPattern[2].B >> 7) & 0x7F);
+
+            command[9] = 0xF7;
 
             FirmataSerialWrite(command, command.Length);
         }

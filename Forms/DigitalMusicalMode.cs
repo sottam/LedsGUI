@@ -77,13 +77,17 @@ namespace LedsGUI
             if (CsCoreMod._DigitallineSpectrum.IsXLogScale == true)
             {
                 CsCoreMod._DigitallineSpectrum.IsXLogScale = false;
-                CsCoreMod._DigitalvoicePrint3DSpectrum.IsXLogScale = false;
+                CsCoreMod._DigitalBassPrint3DSpectrum.IsXLogScale = false;
+                CsCoreMod._DigitalMedioPrint3DSpectrum.IsXLogScale = false;
+                CsCoreMod._DigitaltreblePrint3DSpectrum.IsXLogScale = false;
             }
 
             else
             {
                 CsCoreMod._DigitallineSpectrum.IsXLogScale = true;
-                CsCoreMod._DigitalvoicePrint3DSpectrum.IsXLogScale = true;
+                CsCoreMod._DigitalBassPrint3DSpectrum.IsXLogScale = true;
+                CsCoreMod._DigitalMedioPrint3DSpectrum.IsXLogScale = true;
+                CsCoreMod._DigitaltreblePrint3DSpectrum.IsXLogScale = true;
             }
 
         }
@@ -93,31 +97,41 @@ namespace LedsGUI
             if (CsCoreMod._DigitallineSpectrum.UseAverage == true)
             {
                 CsCoreMod._DigitallineSpectrum.UseAverage = false;
-                CsCoreMod._DigitalvoicePrint3DSpectrum.UseAverage = false;
+                CsCoreMod._DigitalBassPrint3DSpectrum.UseAverage = false;
+                CsCoreMod._DigitalMedioPrint3DSpectrum.UseAverage = false;
+                CsCoreMod._DigitaltreblePrint3DSpectrum.UseAverage = false;
             }
             else
             {
                 CsCoreMod._DigitallineSpectrum.UseAverage = true;
-                CsCoreMod._DigitalvoicePrint3DSpectrum.UseAverage = true;
+                CsCoreMod._DigitalBassPrint3DSpectrum.UseAverage = true;
+                CsCoreMod._DigitalMedioPrint3DSpectrum.UseAverage = true;
+                CsCoreMod._DigitaltreblePrint3DSpectrum.UseAverage = true;
             }
         }
 
         private void squareRootToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CsCoreMod._DigitallineSpectrum.ScalingStrategy = ScalingStrategy.Sqrt;
-            CsCoreMod._DigitalvoicePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Sqrt;
+            CsCoreMod._DigitalBassPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Sqrt;
+            CsCoreMod._DigitalMedioPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Sqrt;
+            CsCoreMod._DigitaltreblePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Sqrt;
         }
 
         private void decibelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CsCoreMod._DigitallineSpectrum.ScalingStrategy = ScalingStrategy.Decibel;
-            CsCoreMod._DigitalvoicePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Decibel;
+            CsCoreMod._DigitalBassPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Decibel;
+            CsCoreMod._DigitalMedioPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Decibel;
+            CsCoreMod._DigitaltreblePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Decibel;
         }
 
         private void linearToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CsCoreMod._DigitallineSpectrum.ScalingStrategy = ScalingStrategy.Linear;
-            CsCoreMod._DigitalvoicePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+            CsCoreMod._DigitalBassPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+            CsCoreMod._DigitalMedioPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+            CsCoreMod._DigitaltreblePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
         }
     }
 }

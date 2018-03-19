@@ -14,7 +14,7 @@ namespace LedsGUI.Cscore
         private readonly GradientCalculator _colorCalculator;
         private bool _isInitialized;
 
-        public enum DrawPurpose { ForAnalog, ForDigital, ForGeneric };
+        public enum DrawPurpose { ForAnalog, ForDigitalBass, ForDigitalMedio, ForDigitalTreble, ForGeneric };
 
         public VoicePrint3DSpectrum(FftSize fftSize)
         {
@@ -86,8 +86,14 @@ namespace LedsGUI.Cscore
                             case DrawPurpose.ForAnalog:
                                 FirmataModule.SoundSpectrumColor = pen.Color;
                                 break;
-                            case DrawPurpose.ForDigital:
-                                FirmataModule.DigitalSpectrumPattern[i] = pen.Color;
+                            case DrawPurpose.ForDigitalBass:
+                                FirmataModule.DigitalSpectrumPattern[0] = pen.Color;
+                                break;
+                            case DrawPurpose.ForDigitalMedio:
+                                FirmataModule.DigitalSpectrumPattern[1] = pen.Color;
+                                break;
+                            case DrawPurpose.ForDigitalTreble:
+                                FirmataModule.DigitalSpectrumPattern[2] = pen.Color;
                                 break;
                             case DrawPurpose.ForGeneric:
                                 break;
