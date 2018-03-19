@@ -18,7 +18,10 @@ namespace LedsGUI
         protected override void Dispose(bool disposing)
         {
             _bitmap.Dispose();
-            _bitmap_d.Dispose();
+            _bitmap_dt.Dispose();
+            _bitmap_dm.Dispose();
+            _bitmap_db.Dispose();
+
             _bitmap_g.Dispose();
 
             firmata.Dispose();

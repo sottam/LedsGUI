@@ -22,7 +22,9 @@ namespace LedsGUI
         private Bitmap _bitmap_g = new Bitmap(360, 60);
         private int _xpos_g;
 
-        private Bitmap _bitmap_d = new Bitmap(360, 60);
+        private Bitmap _bitmap_dt = new Bitmap(360, 60);
+        private Bitmap _bitmap_dm = new Bitmap(360, 60);
+        private Bitmap _bitmap_db = new Bitmap(360, 60);
         private int _xpos_d;
 
         private List<String> AvailableSerialPorts;
@@ -481,37 +483,80 @@ namespace LedsGUI
 
         private void digital_GenerateVoice3DPrintSpectrum()
         {
-            PictureBox BufferImageBox = DigitalMusicalModeForm.DigitalSoundSpectrum;
+            PictureBox BufferTrebleImageBox = DigitalMusicalModeForm.TreblePictureBox;
+            PictureBox BufferMedioImageBox = DigitalMusicalModeForm.MedioPictureBox;
+            PictureBox BufferBassImageBox = DigitalMusicalModeForm.BassPictureBox;
 
-            if (BufferImageBox != null && BufferImageBox.Size.Equals(_bitmap_d.Size) == false)
+            #region treble
+
+            if (BufferTrebleImageBox != null && BufferTrebleImageBox.Size.Equals(_bitmap_dt.Size) == false)
             {
-                _bitmap_d = new Bitmap(BufferImageBox.Width, BufferImageBox.Height);
+                _bitmap_dt = new Bitmap(BufferTrebleImageBox.Width, BufferTrebleImageBox.Height);
                 _xpos_d = 0;
             }
 
-            using (Graphics g = Graphics.FromImage(_bitmap_d))
+            using (Graphics g = Graphics.FromImage(_bitmap_dt))
             {
-                DigitalMusicalModeForm.DigitalSoundSpectrum.Image = null;
+                DigitalMusicalModeForm.TreblePictureBox.Image = null;
 
-                if (cscore._DigitalBassPrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_d.Width, 
-                    _bitmap_d.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigitalBass, 3))
+                if (cscore._DigitaltreblePrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_dt.Width,
+                    _bitmap_dt.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigitalTreble, 3))
                 {
                     _xpos_d += 1;
-                    if (_xpos_d >= _bitmap_d.Width)
+                    if (_xpos_d >= _bitmap_dt.Width)
                         _xpos_d = 0;
                 }
 
-                cscore._DigitalMedioPrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_d.Width,
-                    _bitmap_d.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigitalMedio, 3);
-
-
-                cscore._DigitaltreblePrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_d.Width, 
-                    _bitmap_d.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigitalTreble, 3);
-                
-                   
-
-                DigitalMusicalModeForm.DigitalSoundSpectrum.Image = _bitmap_d;
+                DigitalMusicalModeForm.TreblePictureBox.Image = _bitmap_dt;
             }
+
+            #endregion
+
+            #region Medio
+            if (BufferMedioImageBox != null && BufferMedioImageBox.Size.Equals(_bitmap_dm.Size) == false)
+            {
+                _bitmap_dm = new Bitmap(BufferMedioImageBox.Width, BufferMedioImageBox.Height);
+                _xpos_d = 0;
+            }
+
+            using (Graphics g = Graphics.FromImage(_bitmap_dm))
+            {
+                DigitalMusicalModeForm.MedioPictureBox.Image = null;
+
+                if (cscore._DigitalMedioPrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_dm.Width,
+                    _bitmap_dm.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigitalMedio, 3))
+                {
+                    _xpos_d += 1;
+                    if (_xpos_d >= _bitmap_dm.Width)
+                        _xpos_d = 0;
+                }
+
+                DigitalMusicalModeForm.MedioPictureBox.Image = _bitmap_dm;
+            }
+            #endregion
+
+            #region Bass
+            if (BufferBassImageBox != null && BufferBassImageBox.Size.Equals(_bitmap_db.Size) == false)
+            {
+                _bitmap_db = new Bitmap(BufferBassImageBox.Width, BufferBassImageBox.Height);
+                _xpos_d = 0;
+            }
+
+            using (Graphics g = Graphics.FromImage(_bitmap_db))
+            {
+                DigitalMusicalModeForm.BassPictureBox.Image = null;
+
+                if (cscore._DigitalBassPrint3DSpectrum.CreateVoicePrint3D(g, new RectangleF(0, 0, _bitmap_db.Width,
+                    _bitmap_db.Height), _xpos_d, Color.Black, Cscore.VoicePrint3DSpectrum.DrawPurpose.ForDigitalBass, 3))
+                {
+                    _xpos_d += 1;
+                    if (_xpos_d >= _bitmap_db.Width)
+                        _xpos_d = 0;
+                }
+
+                DigitalMusicalModeForm.BassPictureBox.Image = _bitmap_db;
+            }
+            #endregion            
         }
 
         //Timers Tick Event Methods

@@ -162,8 +162,8 @@ namespace LedsGUI
                 SpectrumProvider = spectrumProvider,
                 UseAverage = true,
                 PointCount = 1,
-                IsXLogScale = false,
-                ScalingStrategy = ScalingStrategy.Linear,
+                IsXLogScale = true,
+                ScalingStrategy = ScalingStrategy.Sqrt,
                 MaximumFrequency = 250,
                 MinimumFrequency = 20
             };
@@ -174,8 +174,8 @@ namespace LedsGUI
                 SpectrumProvider = spectrumProvider,
                 UseAverage = true,
                 PointCount = 1,
-                IsXLogScale = false,
-                ScalingStrategy = ScalingStrategy.Linear,
+                IsXLogScale = true,
+                ScalingStrategy = ScalingStrategy.Sqrt,
                 MaximumFrequency = 5000,
                 MinimumFrequency = 250
             };
@@ -186,8 +186,8 @@ namespace LedsGUI
                 SpectrumProvider = spectrumProvider,
                 UseAverage = true,
                 PointCount = 1,
-                IsXLogScale = false,
-                ScalingStrategy = ScalingStrategy.Linear,
+                IsXLogScale = true,
+                ScalingStrategy = ScalingStrategy.Decibel,
                 MaximumFrequency = 20000,
                 MinimumFrequency = 5000
             };
