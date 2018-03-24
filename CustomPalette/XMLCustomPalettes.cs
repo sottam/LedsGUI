@@ -5,16 +5,18 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace LedsGUI
 {
-    class XMLCustomPalettes
+    public class XMLCustomPalettes
     {
         private string xmlPath;
         private string FolderPath;
 
         XElement xml;
+        XmlReader xmlreader;
 
         public XMLCustomPalettes()
         {
@@ -29,7 +31,8 @@ namespace LedsGUI
 
             if (File.Exists(xmlPath))
             {
-                xml = XElement.Load(xmlPath);
+                xmlreader = XmlReader.Create(xmlPath);
+                xml = XElement.Load(xmlreader);
             }
             else
             {
@@ -54,6 +57,7 @@ namespace LedsGUI
             xml.Add(palette);
 
             xml.Save(xmlPath);
+
         }
 
         public void RemovePalette(String name)
@@ -127,6 +131,12 @@ namespace LedsGUI
                 LoadedPalettes.Add(loadedPalette);
             }
             return LoadedPalettes;
+        }
+
+        public void Close()
+        {
+            xmlreader.Close();
+            xmlreader.Dispose();
         }
     }
 }

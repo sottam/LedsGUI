@@ -13,7 +13,7 @@ namespace LedsGUI
 {
     public partial class DigitalCustomPaletteMode : Form
     {
-        XMLCustomPalettes xmlHandler;
+        public XMLCustomPalettes xmlHandler = new XMLCustomPalettes();
 
         private FirmataModule _firmata { get; set; }
         private CustomPalette _LastActivePalette { get; set; }
@@ -47,7 +47,7 @@ namespace LedsGUI
         {
             Palette16radioButton.Checked = true;
 
-            xmlHandler = new XMLCustomPalettes();
+            //xmlHandler = new XMLCustomPalettes();
 
             comboBoxSavedPalettes.Items.AddRange(xmlHandler.LoadSavedPalettes().ToArray());
             if (comboBoxSavedPalettes.Items.Count > 0) comboBoxSavedPalettes.SelectedIndex = 0;

@@ -74,7 +74,6 @@ namespace LedsGUI
             this.AnalogBrightScroll = new System.Windows.Forms.TrackBar();
             this.AnalogSpeedScroll = new System.Windows.Forms.TrackBar();
             this.Analog = new System.Windows.Forms.Label();
-            this.AnalogCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
             this.AnalogComboBox = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
@@ -90,7 +89,6 @@ namespace LedsGUI
             this.DigitalBrightScroll = new System.Windows.Forms.TrackBar();
             this.DigitalSpeedScroll = new System.Windows.Forms.TrackBar();
             this.label11 = new System.Windows.Forms.Label();
-            this.DigitalCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
             this.DigitalComboBox = new System.Windows.Forms.ComboBox();
             this.statusBar = new System.Windows.Forms.StatusStrip();
             this.ComPortStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -98,6 +96,9 @@ namespace LedsGUI
             this.VisualizationTimer = new System.Windows.Forms.Timer(this.components);
             this.StartUpWorker = new System.ComponentModel.BackgroundWorker();
             this.TempWorker = new System.ComponentModel.BackgroundWorker();
+            this.AnalogCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
+            this.DigitalCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
+            this.MusicalRealSamplingToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TrayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -208,7 +209,7 @@ namespace LedsGUI
             // 
             // SoundSpectrumTimer
             // 
-            this.SoundSpectrumTimer.Interval = 20;
+            this.SoundSpectrumTimer.Interval = 17;
             this.SoundSpectrumTimer.Tick += new System.EventHandler(this.SoundSpectrum_Tick);
             // 
             // splitContainer2
@@ -415,18 +416,6 @@ namespace LedsGUI
             this.Analog.Text = "Analog Strip";
             this.Analog.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // AnalogCustomPrincipal
-            // 
-            this.AnalogCustomPrincipal.Location = new System.Drawing.Point(12, 76);
-            this.AnalogCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
-            this.AnalogCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
-            this.AnalogCustomPrincipal.Name = "AnalogCustomPrincipal";
-            this.AnalogCustomPrincipal.Size = new System.Drawing.Size(35, 35);
-            this.AnalogCustomPrincipal.TabIndex = 0;
-            this.AnalogCustomPrincipal.UseVisualStyleBackColor = true;
-            this.AnalogCustomPrincipal.DoubleClick += new System.EventHandler(this.AnalogCustomPrincipal_DoubleClick);
-            this.AnalogCustomPrincipal.Click += new System.EventHandler(this.AnalogCustomPrincipal_Click);
-            // 
             // AnalogComboBox
             // 
             this.AnalogComboBox.FormattingEnabled = true;
@@ -607,18 +596,6 @@ namespace LedsGUI
             this.label11.Text = "Digital Strip";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // DigitalCustomPrincipal
-            // 
-            this.DigitalCustomPrincipal.Location = new System.Drawing.Point(8, 76);
-            this.DigitalCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
-            this.DigitalCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
-            this.DigitalCustomPrincipal.Name = "DigitalCustomPrincipal";
-            this.DigitalCustomPrincipal.Size = new System.Drawing.Size(35, 35);
-            this.DigitalCustomPrincipal.TabIndex = 8;
-            this.DigitalCustomPrincipal.UseVisualStyleBackColor = true;
-            this.DigitalCustomPrincipal.DoubleClick += new System.EventHandler(this.DigitalCustomPrincipal_DoubleClick);
-            this.DigitalCustomPrincipal.Click += new System.EventHandler(this.DigitalCustomPrincipal_Click);
-            // 
             // DigitalComboBox
             // 
             this.DigitalComboBox.FormattingEnabled = true;
@@ -632,7 +609,8 @@ namespace LedsGUI
             // 
             this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ComPortStatusLabel,
-            this.MessageStatusLabel});
+            this.MessageStatusLabel,
+            this.MusicalRealSamplingToolStripStatusLabel});
             this.statusBar.Location = new System.Drawing.Point(0, 205);
             this.statusBar.Name = "statusBar";
             this.statusBar.Size = new System.Drawing.Size(517, 22);
@@ -660,6 +638,36 @@ namespace LedsGUI
             // 
             this.StartUpWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.StartUpWorker_DoWork);
             this.StartUpWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.SetStartUpWorker_RunWorkerCompleted);
+            // 
+            // AnalogCustomPrincipal
+            // 
+            this.AnalogCustomPrincipal.Location = new System.Drawing.Point(12, 76);
+            this.AnalogCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
+            this.AnalogCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
+            this.AnalogCustomPrincipal.Name = "AnalogCustomPrincipal";
+            this.AnalogCustomPrincipal.Size = new System.Drawing.Size(35, 35);
+            this.AnalogCustomPrincipal.TabIndex = 0;
+            this.AnalogCustomPrincipal.UseVisualStyleBackColor = true;
+            this.AnalogCustomPrincipal.DoubleClick += new System.EventHandler(this.AnalogCustomPrincipal_DoubleClick);
+            this.AnalogCustomPrincipal.Click += new System.EventHandler(this.AnalogCustomPrincipal_Click);
+            // 
+            // DigitalCustomPrincipal
+            // 
+            this.DigitalCustomPrincipal.Location = new System.Drawing.Point(8, 76);
+            this.DigitalCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
+            this.DigitalCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
+            this.DigitalCustomPrincipal.Name = "DigitalCustomPrincipal";
+            this.DigitalCustomPrincipal.Size = new System.Drawing.Size(35, 35);
+            this.DigitalCustomPrincipal.TabIndex = 8;
+            this.DigitalCustomPrincipal.UseVisualStyleBackColor = true;
+            this.DigitalCustomPrincipal.DoubleClick += new System.EventHandler(this.DigitalCustomPrincipal_DoubleClick);
+            this.DigitalCustomPrincipal.Click += new System.EventHandler(this.DigitalCustomPrincipal_Click);
+            // 
+            // MusicalRealSamplingToolStripStatusLabel
+            // 
+            this.MusicalRealSamplingToolStripStatusLabel.Name = "MusicalRealSamplingToolStripStatusLabel";
+            this.MusicalRealSamplingToolStripStatusLabel.Size = new System.Drawing.Size(120, 17);
+            this.MusicalRealSamplingToolStripStatusLabel.Text = "MusicalRealSampling";
             // 
             // LedController
             // 
@@ -760,6 +768,7 @@ namespace LedsGUI
         private BackgroundWorker TempWorker;
         private System.Windows.Forms.ToolStripStatusLabel ComPortStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel MessageStatusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel MusicalRealSamplingToolStripStatusLabel;
     }
 }
 

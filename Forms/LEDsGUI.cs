@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO.Ports;
 using System.Windows.Forms;
@@ -258,6 +259,8 @@ namespace LedsGUI
 
         private void LedController_FormClosed(object sender, FormClosedEventArgs e)
         {
+            this.DigitalCustomPaletteMode.Close();
+
             SaveConfigs();
 
             firmata.Stop();
@@ -266,8 +269,6 @@ namespace LedsGUI
 
         private void LedController_Resize(object sender, EventArgs e)
         {
-
-            
             if (this.WindowState == FormWindowState.Minimized)
             {
                 //this.Hide();
@@ -351,7 +352,8 @@ namespace LedsGUI
 
         private void fecharToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            this.DigitalCustomPaletteMode.Close();
+
             SaveConfigs();
 
             firmata.Stop();
@@ -562,6 +564,8 @@ namespace LedsGUI
         //Timers Tick Event Methods
         private void SoundSpectrum_Tick(object sender, EventArgs e)
         {
+            Stopwatch sw = Stopwatch.StartNew();        
+
             if (AnalogComboBox.SelectedIndex != 5 && DigitalComboBox.SelectedIndex != 6)
             {
                 SoundSpectrumTimer.Stop();
@@ -585,6 +589,9 @@ namespace LedsGUI
                 //send result
                 firmata.DigitalSoundSpectrumTick();
             }
+            sw.Stop();
+            MusicalRealSamplingToolStripStatusLabel.Text = sw.ElapsedMilliseconds.ToString();
+            //Console.WriteLine(sw.ElapsedMilliseconds);
         }
 
         private void VisualizationTimer_Tick(object sender, EventArgs e)
