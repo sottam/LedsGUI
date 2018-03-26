@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -43,6 +44,49 @@ namespace LedsGUI
         private DigitalCustomPaletteMode DigitalCustomPaletteMode = new DigitalCustomPaletteMode();
 
         private CustomPalette LastActivatedPalette;
+
+        private static bool resumedFromSuspension = false;
+
+        public static bool ResumedFromSuspension
+        {
+            get { return resumedFromSuspension; }
+            set
+            {
+                resumedFromSuspension = value;
+                if (resumedFromSuspension == true)
+                {
+                    TempWorker.RunWorkerAsync();
+                    resumedFromSuspension = false;
+                }
+            }
+        }
+
+        private static BackgroundWorker bw = new BackgroundWorker();
+        
+        private static bool suspending = false;
+
+        public static bool Suspending
+        {
+            get { return suspending; }
+            set
+            {
+                suspending = value;
+                if (suspending == true)
+                {
+                    bw.RunWorkerAsync();
+                    suspending = false;
+                }
+            }
+        }
+
+        private void Bw_DoWork(object sender, DoWorkEventArgs e)
+        {
+            this.Invoke(new Action(() =>
+            {
+                firmata.SendAnalogMode(7);
+                firmata.SendDigitalMode(7);
+            }));
+        }
 
         #endregion
 
@@ -204,6 +248,7 @@ namespace LedsGUI
                 DigitalComboBox_SelectedIndexChanged(DigitalComboBox, EventArgs.Empty);
                 
                 TempWorker.DoWork += TempWorker_DoWork;
+                bw.DoWork += Bw_DoWork;
                 TempWorker.RunWorkerAsync();
             }
 
@@ -219,8 +264,12 @@ namespace LedsGUI
         {
             //sleep time to guarantee that the saved config are, in fact, loaded
             System.Threading.Thread.Sleep(3000);
-            AnalogComboBox_SelectedIndexChanged(AnalogComboBox, EventArgs.Empty);
-            DigitalComboBox_SelectedIndexChanged(DigitalComboBox, EventArgs.Empty);
+
+            this.Invoke(new Action(() =>
+            {
+                AnalogComboBox_SelectedIndexChanged(AnalogComboBox, EventArgs.Empty);
+                DigitalComboBox_SelectedIndexChanged(DigitalComboBox, EventArgs.Empty);
+            }));
         }
 
         private void Visualization_VisibleChanged(object sender, EventArgs e)
@@ -260,6 +309,7 @@ namespace LedsGUI
         private void LedController_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.DigitalCustomPaletteMode.Close();
+            SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged;
 
             SaveConfigs();
 
@@ -273,6 +323,20 @@ namespace LedsGUI
             {
                 //this.Hide();
                 this.ShowInTaskbar = false;
+            }
+        }
+
+        public static void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if (e.Mode.Equals(PowerModes.Resume))
+            {
+                //Console.WriteLine("RETORNANDO...");
+                ResumedFromSuspension = true;
+            }
+            else if (e.Mode.Equals(PowerModes.Suspend))
+            {
+                //Console.WriteLine("VAZANDO...");
+                Suspending = true;
             }
         }
 
@@ -564,8 +628,7 @@ namespace LedsGUI
         //Timers Tick Event Methods
         private void SoundSpectrum_Tick(object sender, EventArgs e)
         {
-            Stopwatch sw = Stopwatch.StartNew();        
-
+            Stopwatch sw = Stopwatch.StartNew();
             if (AnalogComboBox.SelectedIndex != 5 && DigitalComboBox.SelectedIndex != 6)
             {
                 SoundSpectrumTimer.Stop();
@@ -580,7 +643,6 @@ namespace LedsGUI
                 //send Result
                 firmata.SoundSpectrumTick();
             }
-
             if (DigitalComboBox.SelectedIndex == 6) //musical mode digital
             {
                 //render
@@ -591,7 +653,6 @@ namespace LedsGUI
             }
             sw.Stop();
             MusicalRealSamplingToolStripStatusLabel.Text = sw.ElapsedMilliseconds.ToString();
-            //Console.WriteLine(sw.ElapsedMilliseconds);
         }
 
         private void VisualizationTimer_Tick(object sender, EventArgs e)
@@ -851,7 +912,6 @@ namespace LedsGUI
         }
 
         #endregion
-
 
     }
 }

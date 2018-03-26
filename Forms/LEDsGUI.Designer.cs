@@ -95,7 +95,7 @@ namespace LedsGUI
             this.MessageStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.VisualizationTimer = new System.Windows.Forms.Timer(this.components);
             this.StartUpWorker = new System.ComponentModel.BackgroundWorker();
-            this.TempWorker = new System.ComponentModel.BackgroundWorker();
+            TempWorker = new System.ComponentModel.BackgroundWorker();
             this.AnalogCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
             this.DigitalCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
             this.MusicalRealSamplingToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -765,7 +765,7 @@ namespace LedsGUI
         private System.Windows.Forms.Timer VisualizationTimer;
         private System.ComponentModel.BackgroundWorker StartUpWorker;
         private System.Windows.Forms.ToolStripMenuItem showSketchToolStripMenuItem;
-        private BackgroundWorker TempWorker;
+        private static BackgroundWorker TempWorker;
         private System.Windows.Forms.ToolStripStatusLabel ComPortStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel MessageStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel MusicalRealSamplingToolStripStatusLabel;

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace LedsGUI
 {
@@ -16,7 +18,12 @@ namespace LedsGUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            SystemEvents.PowerModeChanged += LedController.SystemEvents_PowerModeChanged; 
+
             Application.Run(new LedController());
         }
+
+
     }
 }
