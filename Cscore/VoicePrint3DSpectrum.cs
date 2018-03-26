@@ -65,7 +65,7 @@ namespace LedsGUI.Cscore
             if (SpectrumProvider.GetFftData(fftBuffer, this))
             {
                 //prepare the fft result for rendering
-                SpectrumPointData[] spectrumPoints = CalculateSpectrumPoints(1.0, fftBuffer);
+                SpectrumPointData[] spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer);
                 using (var pen = new Pen(background, lineThickness))
                 {
                     float currentYOffset = clipRectangle.Y + clipRectangle.Height;
