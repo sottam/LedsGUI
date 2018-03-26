@@ -164,7 +164,7 @@ namespace LedsGUI
                 PointCount = 1,
                 IsXLogScale = true,
                 ScalingStrategy = ScalingStrategy.Sqrt,
-                MaximumFrequency = 500,
+                MaximumFrequency = 250,
                 MinimumFrequency = 20
             };
 
@@ -177,7 +177,7 @@ namespace LedsGUI
                 IsXLogScale = true,
                 ScalingStrategy = ScalingStrategy.Sqrt,
                 MaximumFrequency = 3000,
-                MinimumFrequency = 500
+                MinimumFrequency = 250
             };
 
             _DigitaltreblePrint3DSpectrum = new VoicePrint3DSpectrum(fftSize)
