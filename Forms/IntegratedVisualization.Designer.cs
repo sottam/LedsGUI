@@ -137,6 +137,7 @@
             this.GenericSoundBarPropertyGrid.Name = "GenericSoundBarPropertyGrid";
             this.GenericSoundBarPropertyGrid.Size = new System.Drawing.Size(230, 297);
             this.GenericSoundBarPropertyGrid.TabIndex = 0;
+            this.GenericSoundBarPropertyGrid.ToolbarVisible = false;
             // 
             // splitContainer3
             // 
@@ -196,6 +197,7 @@
             this.GenericSoundSpectrumPropertyGrid.Name = "GenericSoundSpectrumPropertyGrid";
             this.GenericSoundSpectrumPropertyGrid.Size = new System.Drawing.Size(230, 270);
             this.GenericSoundSpectrumPropertyGrid.TabIndex = 0;
+            this.GenericSoundSpectrumPropertyGrid.ToolbarVisible = false;
             // 
             // IntegratedVisualization
             // 

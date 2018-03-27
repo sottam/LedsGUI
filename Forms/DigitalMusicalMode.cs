@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LedsGUI.Cscore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +23,17 @@ namespace LedsGUI
             InitializeComponent();
         }
 
+        private void DigitalMusicalMode_Load(object sender, EventArgs e)
+        {
+            TrebleNumericUpDown.Value = VoicePrint3DSpectrum.trebleFactor;
+            MedioNumericUpDown.Value = VoicePrint3DSpectrum.medioFactor;
+            BassNumericUpDown.Value = VoicePrint3DSpectrum.bassFactor;
+
+            TreblePropertyGrid.SelectedObject = CsCoreMod._DigitaltreblePrint3DSpectrum;
+            MedioPropertyGrid.SelectedObject = CsCoreMod._DigitalMedioPrint3DSpectrum;
+            BassPropertyGrid.SelectedObject = CsCoreMod._DigitalBassPrint3DSpectrum;
+        }
+
         private void DigitalMusicalMode_FormClosing(object sender, FormClosingEventArgs e)
         {
             this.Hide();
@@ -38,7 +50,12 @@ namespace LedsGUI
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
-            
+            if (splitContainer2.Panel2Collapsed)
+                hidePropertiesToolStripMenuItem.CheckState = CheckState.Checked;
+            else
+                hidePropertiesToolStripMenuItem.CheckState = CheckState.Unchecked;
+
+
             ContextMenuStrip cms = sender as ContextMenuStrip;
             PictureBox clickedImage = cms.SourceControl as PictureBox;
             LastPictureBoxClicked = clickedImage;
@@ -299,6 +316,38 @@ namespace LedsGUI
             {
                 CsCoreMod._DigitallineSpectrum.ScalingStrategy = ScalingStrategy.Linear;
             }
+        }
+
+        private void hidePropertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(hidePropertiesToolStripMenuItem.CheckState == CheckState.Checked)
+            {
+                splitContainer2.Panel2Collapsed = false;
+                splitContainer3.Panel2Collapsed = false;
+                splitContainer4.Panel2Collapsed = false;
+
+            }
+            else
+            {
+                splitContainer2.Panel2Collapsed = true;
+                splitContainer3.Panel2Collapsed = true;
+                splitContainer4.Panel2Collapsed = true;
+            }
+        }
+
+        private void TrebleNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            VoicePrint3DSpectrum.trebleFactor = TrebleNumericUpDown.Value;
+        }
+
+        private void MedioNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            VoicePrint3DSpectrum.medioFactor = MedioNumericUpDown.Value;
+        }
+
+        private void BassNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            VoicePrint3DSpectrum.bassFactor = BassNumericUpDown.Value;
         }
     }
 }

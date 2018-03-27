@@ -11,6 +11,10 @@ namespace LedsGUI.Cscore
 {
     public class VoicePrint3DSpectrum : SpectrumBase
     {
+        public static decimal trebleFactor = 65;
+        public static decimal medioFactor = 21;
+        public static decimal bassFactor = 8;
+
         private readonly GradientCalculator _colorCalculator;
         private bool _isInitialized;
 
@@ -72,13 +76,13 @@ namespace LedsGUI.Cscore
                         spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer);
                         break;
                     case DrawPurpose.ForDigitalBass:
-                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, 8);
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, bassFactor);
                         break;
                     case DrawPurpose.ForDigitalMedio:
-                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, 21);
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, medioFactor);
                         break;
                     case DrawPurpose.ForDigitalTreble:
-                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, 65);
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, trebleFactor);
                         break;
                     case DrawPurpose.ForGeneric:
                         spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer);
