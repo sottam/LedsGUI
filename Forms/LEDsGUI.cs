@@ -311,6 +311,9 @@ namespace LedsGUI
             this.DigitalCustomPaletteMode.Close();
             SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged;
 
+            firmata.SendAnalogMode(7);
+            firmata.SendDigitalMode(7);
+
             SaveConfigs();
 
             firmata.Stop();

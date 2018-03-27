@@ -33,20 +33,20 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.DigitalSoundBars = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.alwaysOnTopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.NameToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.useXLogScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scalingStrategyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.squareRootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.decibelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.linearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useAverageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.alwaysOnTopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.TreblePictureBox = new System.Windows.Forms.PictureBox();
             this.MedioPictureBox = new System.Windows.Forms.PictureBox();
             this.BassPictureBox = new System.Windows.Forms.PictureBox();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.NameToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -102,17 +102,15 @@
             this.contextMenuStrip1.Size = new System.Drawing.Size(161, 129);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
-            // alwaysOnTopToolStripMenuItem
+            // NameToolStripTextBox
             // 
-            this.alwaysOnTopToolStripMenuItem.Name = "alwaysOnTopToolStripMenuItem";
-            this.alwaysOnTopToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.alwaysOnTopToolStripMenuItem.Text = "Always on top";
-            this.alwaysOnTopToolStripMenuItem.Click += new System.EventHandler(this.alwaysOnTopToolStripMenuItem_Click);
+            this.NameToolStripTextBox.Name = "NameToolStripTextBox";
+            this.NameToolStripTextBox.Size = new System.Drawing.Size(100, 23);
             // 
-            // toolStripSeparator1
+            // toolStripSeparator2
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(157, 6);
             // 
             // useXLogScaleToolStripMenuItem
             // 
@@ -159,6 +157,18 @@
             this.useAverageToolStripMenuItem.Text = "Use Average";
             this.useAverageToolStripMenuItem.Click += new System.EventHandler(this.useAverageToolStripMenuItem_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(157, 6);
+            // 
+            // alwaysOnTopToolStripMenuItem
+            // 
+            this.alwaysOnTopToolStripMenuItem.Name = "alwaysOnTopToolStripMenuItem";
+            this.alwaysOnTopToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.alwaysOnTopToolStripMenuItem.Text = "Always on top";
+            this.alwaysOnTopToolStripMenuItem.Click += new System.EventHandler(this.alwaysOnTopToolStripMenuItem_Click);
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
@@ -182,7 +192,7 @@
             this.TreblePictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TreblePictureBox.Location = new System.Drawing.Point(3, 3);
             this.TreblePictureBox.Name = "TreblePictureBox";
-            this.TreblePictureBox.Size = new System.Drawing.Size(442, 42);
+            this.TreblePictureBox.Size = new System.Drawing.Size(442, 43);
             this.TreblePictureBox.TabIndex = 0;
             this.TreblePictureBox.TabStop = false;
             this.TreblePictureBox.Tag = "Treble";
@@ -191,9 +201,9 @@
             // 
             this.MedioPictureBox.ContextMenuStrip = this.contextMenuStrip1;
             this.MedioPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MedioPictureBox.Location = new System.Drawing.Point(3, 51);
+            this.MedioPictureBox.Location = new System.Drawing.Point(3, 52);
             this.MedioPictureBox.Name = "MedioPictureBox";
-            this.MedioPictureBox.Size = new System.Drawing.Size(442, 42);
+            this.MedioPictureBox.Size = new System.Drawing.Size(442, 43);
             this.MedioPictureBox.TabIndex = 1;
             this.MedioPictureBox.TabStop = false;
             this.MedioPictureBox.Tag = "Medio";
@@ -202,22 +212,12 @@
             // 
             this.BassPictureBox.ContextMenuStrip = this.contextMenuStrip1;
             this.BassPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.BassPictureBox.Location = new System.Drawing.Point(3, 99);
+            this.BassPictureBox.Location = new System.Drawing.Point(3, 101);
             this.BassPictureBox.Name = "BassPictureBox";
-            this.BassPictureBox.Size = new System.Drawing.Size(442, 45);
+            this.BassPictureBox.Size = new System.Drawing.Size(442, 43);
             this.BassPictureBox.TabIndex = 2;
             this.BassPictureBox.TabStop = false;
             this.BassPictureBox.Tag = "Bass";
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(157, 6);
-            // 
-            // NameToolStripTextBox
-            // 
-            this.NameToolStripTextBox.Name = "NameToolStripTextBox";
-            this.NameToolStripTextBox.Size = new System.Drawing.Size(100, 23);
             // 
             // DigitalMusicalMode
             // 

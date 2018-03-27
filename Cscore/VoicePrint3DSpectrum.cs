@@ -64,8 +64,31 @@ namespace LedsGUI.Cscore
             //get the fft result from the spectrumprovider
             if (SpectrumProvider.GetFftData(fftBuffer, this))
             {
+                SpectrumPointData[] spectrumPoints;
                 //prepare the fft result for rendering
-                SpectrumPointData[] spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer);
+                switch (dp)
+                {
+                    case DrawPurpose.ForAnalog:
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer);
+                        break;
+                    case DrawPurpose.ForDigitalBass:
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, 8);
+                        break;
+                    case DrawPurpose.ForDigitalMedio:
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, 21);
+                        break;
+                    case DrawPurpose.ForDigitalTreble:
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, 65);
+                        break;
+                    case DrawPurpose.ForGeneric:
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer);
+                        break;
+                    default:
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer);
+                        break;
+                }
+
+                
                 using (var pen = new Pen(background, lineThickness))
                 {
                     float currentYOffset = clipRectangle.Y + clipRectangle.Height;

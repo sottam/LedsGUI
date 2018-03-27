@@ -160,10 +160,10 @@ namespace LedsGUI
             {
                 Colors = new Color[2] { Color.Black, Color.Red },
                 SpectrumProvider = spectrumProvider,
-                UseAverage = true,
+                UseAverage = false,
                 PointCount = 1,
                 IsXLogScale = true,
-                ScalingStrategy = ScalingStrategy.Sqrt,
+                ScalingStrategy = ScalingStrategy.Linear,
                 MaximumFrequency = 250,
                 MinimumFrequency = 20
             };
@@ -172,10 +172,10 @@ namespace LedsGUI
             {
                 Colors = new Color[2] { Color.Black, Color.Green },
                 SpectrumProvider = spectrumProvider,
-                UseAverage = true,
+                UseAverage = false,
                 PointCount = 1,
                 IsXLogScale = true,
-                ScalingStrategy = ScalingStrategy.Sqrt,
+                ScalingStrategy = ScalingStrategy.Linear,
                 MaximumFrequency = 3000,
                 MinimumFrequency = 250
             };
@@ -184,11 +184,11 @@ namespace LedsGUI
             {
                 Colors = new Color[2] { Color.Black, Color.Blue },
                 SpectrumProvider = spectrumProvider,
-                UseAverage = true,
+                UseAverage = false,
                 PointCount = 1,
                 IsXLogScale = true,
-                ScalingStrategy = ScalingStrategy.Sqrt,
-                MaximumFrequency = 8000,
+                ScalingStrategy = ScalingStrategy.Linear,
+                MaximumFrequency = 16000,
                 MinimumFrequency = 3000
             };
 

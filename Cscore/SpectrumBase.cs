@@ -10,6 +10,7 @@ namespace WinformsVisualization.Visualization
     public class SpectrumBase : INotifyPropertyChanged
     {
         private const int ScaleFactorLinear = 9;
+        
         protected const int ScaleFactorSqr = 2;
         protected const double MinDbValue = -90;
         protected const double MaxDbValue = 0;
@@ -155,7 +156,7 @@ namespace WinformsVisualization.Visualization
             }
         }
 
-        protected virtual SpectrumPointData[] CalculateSpectrumPoints(double maxValue, float[] fftBuffer)
+        protected virtual SpectrumPointData[] CalculateSpectrumPoints(double maxValue, float[] fftBuffer, float scaleFactorLinear = 9)
         {
             var dataPoints = new List<SpectrumPointData>();
 
@@ -172,7 +173,7 @@ namespace WinformsVisualization.Visualization
                         value0 = (((20 * Math.Log10(fftBuffer[i])) - MinDbValue) / DbScale) * actualMaxValue;
                         break;
                     case ScalingStrategy.Linear:
-                        value0 = (fftBuffer[i] * ScaleFactorLinear) * actualMaxValue;
+                        value0 = (fftBuffer[i] * scaleFactorLinear) * actualMaxValue;
                         break;
                     case ScalingStrategy.Sqrt:
                         value0 = ((Math.Sqrt(fftBuffer[i])) * ScaleFactorSqr) * actualMaxValue;
