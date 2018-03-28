@@ -74,6 +74,7 @@ namespace LedsGUI
             this.AnalogBrightScroll = new System.Windows.Forms.TrackBar();
             this.AnalogSpeedScroll = new System.Windows.Forms.TrackBar();
             this.Analog = new System.Windows.Forms.Label();
+            this.AnalogCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
             this.AnalogComboBox = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
@@ -89,16 +90,15 @@ namespace LedsGUI
             this.DigitalBrightScroll = new System.Windows.Forms.TrackBar();
             this.DigitalSpeedScroll = new System.Windows.Forms.TrackBar();
             this.label11 = new System.Windows.Forms.Label();
+            this.DigitalCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
             this.DigitalComboBox = new System.Windows.Forms.ComboBox();
             this.statusBar = new System.Windows.Forms.StatusStrip();
             this.ComPortStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.MessageStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.MusicalRealSamplingToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.VisualizationTimer = new System.Windows.Forms.Timer(this.components);
             this.StartUpWorker = new System.ComponentModel.BackgroundWorker();
             TempWorker = new System.ComponentModel.BackgroundWorker();
-            this.AnalogCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
-            this.DigitalCustomPrincipal = new LedsGUI.CustomComponents.DoubleClickButton();
-            this.MusicalRealSamplingToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TrayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -311,6 +311,8 @@ namespace LedsGUI
             // AnalogLastCustom4
             // 
             this.AnalogLastCustom4.AutoSize = true;
+            this.AnalogLastCustom4.BackColor = global::LedsGUI.Properties.Settings.Default.analogLastColor4;
+            this.AnalogLastCustom4.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "analogLastColor4", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.AnalogLastCustom4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalogLastCustom4.Location = new System.Drawing.Point(96, 3);
             this.AnalogLastCustom4.MaximumSize = new System.Drawing.Size(26, 26);
@@ -318,12 +320,14 @@ namespace LedsGUI
             this.AnalogLastCustom4.Name = "AnalogLastCustom4";
             this.AnalogLastCustom4.Size = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom4.TabIndex = 3;
-            this.AnalogLastCustom4.UseVisualStyleBackColor = true;
+            this.AnalogLastCustom4.UseVisualStyleBackColor = false;
             this.AnalogLastCustom4.Click += new System.EventHandler(this.AnalogLastCustomColor);
             // 
             // AnalogLastCustom1
             // 
             this.AnalogLastCustom1.AutoSize = true;
+            this.AnalogLastCustom1.BackColor = global::LedsGUI.Properties.Settings.Default.analogLastColor1;
+            this.AnalogLastCustom1.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "analogLastColor1", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.AnalogLastCustom1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalogLastCustom1.Location = new System.Drawing.Point(3, 3);
             this.AnalogLastCustom1.MaximumSize = new System.Drawing.Size(26, 26);
@@ -331,12 +335,14 @@ namespace LedsGUI
             this.AnalogLastCustom1.Name = "AnalogLastCustom1";
             this.AnalogLastCustom1.Size = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom1.TabIndex = 0;
-            this.AnalogLastCustom1.UseVisualStyleBackColor = true;
+            this.AnalogLastCustom1.UseVisualStyleBackColor = false;
             this.AnalogLastCustom1.Click += new System.EventHandler(this.AnalogLastCustomColor);
             // 
             // AnalogLastCustom3
             // 
             this.AnalogLastCustom3.AutoSize = true;
+            this.AnalogLastCustom3.BackColor = global::LedsGUI.Properties.Settings.Default.analogLastColor3;
+            this.AnalogLastCustom3.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "analogLastColor3", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.AnalogLastCustom3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalogLastCustom3.Location = new System.Drawing.Point(65, 3);
             this.AnalogLastCustom3.MaximumSize = new System.Drawing.Size(26, 26);
@@ -344,12 +350,14 @@ namespace LedsGUI
             this.AnalogLastCustom3.Name = "AnalogLastCustom3";
             this.AnalogLastCustom3.Size = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom3.TabIndex = 2;
-            this.AnalogLastCustom3.UseVisualStyleBackColor = true;
+            this.AnalogLastCustom3.UseVisualStyleBackColor = false;
             this.AnalogLastCustom3.Click += new System.EventHandler(this.AnalogLastCustomColor);
             // 
             // AnalogLastCustom2
             // 
             this.AnalogLastCustom2.AutoSize = true;
+            this.AnalogLastCustom2.BackColor = global::LedsGUI.Properties.Settings.Default.analogLastColor2;
+            this.AnalogLastCustom2.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "analogLastColor2", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.AnalogLastCustom2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalogLastCustom2.Location = new System.Drawing.Point(34, 3);
             this.AnalogLastCustom2.MaximumSize = new System.Drawing.Size(26, 26);
@@ -357,29 +365,33 @@ namespace LedsGUI
             this.AnalogLastCustom2.Name = "AnalogLastCustom2";
             this.AnalogLastCustom2.Size = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom2.TabIndex = 1;
-            this.AnalogLastCustom2.UseVisualStyleBackColor = true;
+            this.AnalogLastCustom2.UseVisualStyleBackColor = false;
             this.AnalogLastCustom2.Click += new System.EventHandler(this.AnalogLastCustomColor);
             // 
             // AnalogLastCustom5
             // 
+            this.AnalogLastCustom5.BackColor = global::LedsGUI.Properties.Settings.Default.analogLastColor5;
+            this.AnalogLastCustom5.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "analogLastColor5", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.AnalogLastCustom5.Location = new System.Drawing.Point(127, 3);
             this.AnalogLastCustom5.MaximumSize = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom5.MinimumSize = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom5.Name = "AnalogLastCustom5";
             this.AnalogLastCustom5.Size = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom5.TabIndex = 4;
-            this.AnalogLastCustom5.UseVisualStyleBackColor = true;
+            this.AnalogLastCustom5.UseVisualStyleBackColor = false;
             this.AnalogLastCustom5.Click += new System.EventHandler(this.AnalogLastCustomColor);
             // 
             // AnalogLastCustom6
             // 
+            this.AnalogLastCustom6.BackColor = global::LedsGUI.Properties.Settings.Default.analogLastColor6;
+            this.AnalogLastCustom6.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "analogLastColor6", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.AnalogLastCustom6.Location = new System.Drawing.Point(158, 3);
             this.AnalogLastCustom6.MaximumSize = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom6.MinimumSize = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom6.Name = "AnalogLastCustom6";
             this.AnalogLastCustom6.Size = new System.Drawing.Size(26, 26);
             this.AnalogLastCustom6.TabIndex = 5;
-            this.AnalogLastCustom6.UseVisualStyleBackColor = true;
+            this.AnalogLastCustom6.UseVisualStyleBackColor = false;
             this.AnalogLastCustom6.Click += new System.EventHandler(this.AnalogLastCustomColor);
             // 
             // AnalogBrightScroll
@@ -415,6 +427,20 @@ namespace LedsGUI
             this.Analog.TabIndex = 1;
             this.Analog.Text = "Analog Strip";
             this.Analog.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // AnalogCustomPrincipal
+            // 
+            this.AnalogCustomPrincipal.BackColor = global::LedsGUI.Properties.Settings.Default.AnalogLastCustomColorPrincipal;
+            this.AnalogCustomPrincipal.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "AnalogLastCustomColorPrincipal", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.AnalogCustomPrincipal.Location = new System.Drawing.Point(12, 76);
+            this.AnalogCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
+            this.AnalogCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
+            this.AnalogCustomPrincipal.Name = "AnalogCustomPrincipal";
+            this.AnalogCustomPrincipal.Size = new System.Drawing.Size(35, 35);
+            this.AnalogCustomPrincipal.TabIndex = 0;
+            this.AnalogCustomPrincipal.UseVisualStyleBackColor = false;
+            this.AnalogCustomPrincipal.DoubleClick += new System.EventHandler(this.AnalogCustomPrincipal_DoubleClick);
+            this.AnalogCustomPrincipal.Click += new System.EventHandler(this.AnalogCustomPrincipal_Click);
             // 
             // AnalogComboBox
             // 
@@ -491,6 +517,8 @@ namespace LedsGUI
             // DigitalLastCustom4
             // 
             this.DigitalLastCustom4.AutoSize = true;
+            this.DigitalLastCustom4.BackColor = global::LedsGUI.Properties.Settings.Default.digitalLastColor4;
+            this.DigitalLastCustom4.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "digitalLastColor4", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.DigitalLastCustom4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DigitalLastCustom4.Location = new System.Drawing.Point(96, 3);
             this.DigitalLastCustom4.MaximumSize = new System.Drawing.Size(26, 26);
@@ -498,12 +526,14 @@ namespace LedsGUI
             this.DigitalLastCustom4.Name = "DigitalLastCustom4";
             this.DigitalLastCustom4.Size = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom4.TabIndex = 3;
-            this.DigitalLastCustom4.UseVisualStyleBackColor = true;
+            this.DigitalLastCustom4.UseVisualStyleBackColor = false;
             this.DigitalLastCustom4.Click += new System.EventHandler(this.DigitalLastCustomColor);
             // 
             // DigitalLastCustom1
             // 
             this.DigitalLastCustom1.AutoSize = true;
+            this.DigitalLastCustom1.BackColor = global::LedsGUI.Properties.Settings.Default.digitalLastColor1;
+            this.DigitalLastCustom1.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "digitalLastColor1", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.DigitalLastCustom1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DigitalLastCustom1.Location = new System.Drawing.Point(3, 3);
             this.DigitalLastCustom1.MaximumSize = new System.Drawing.Size(26, 26);
@@ -511,12 +541,14 @@ namespace LedsGUI
             this.DigitalLastCustom1.Name = "DigitalLastCustom1";
             this.DigitalLastCustom1.Size = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom1.TabIndex = 0;
-            this.DigitalLastCustom1.UseVisualStyleBackColor = true;
+            this.DigitalLastCustom1.UseVisualStyleBackColor = false;
             this.DigitalLastCustom1.Click += new System.EventHandler(this.DigitalLastCustomColor);
             // 
             // DigitalLastCustom3
             // 
             this.DigitalLastCustom3.AutoSize = true;
+            this.DigitalLastCustom3.BackColor = global::LedsGUI.Properties.Settings.Default.digitalLastColor3;
+            this.DigitalLastCustom3.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "digitalLastColor3", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.DigitalLastCustom3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DigitalLastCustom3.Location = new System.Drawing.Point(65, 3);
             this.DigitalLastCustom3.MaximumSize = new System.Drawing.Size(26, 26);
@@ -524,12 +556,14 @@ namespace LedsGUI
             this.DigitalLastCustom3.Name = "DigitalLastCustom3";
             this.DigitalLastCustom3.Size = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom3.TabIndex = 2;
-            this.DigitalLastCustom3.UseVisualStyleBackColor = true;
+            this.DigitalLastCustom3.UseVisualStyleBackColor = false;
             this.DigitalLastCustom3.Click += new System.EventHandler(this.DigitalLastCustomColor);
             // 
             // DigitalLastCustom2
             // 
             this.DigitalLastCustom2.AutoSize = true;
+            this.DigitalLastCustom2.BackColor = global::LedsGUI.Properties.Settings.Default.digitalLastColor2;
+            this.DigitalLastCustom2.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "digitalLastColor2", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.DigitalLastCustom2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DigitalLastCustom2.Location = new System.Drawing.Point(34, 3);
             this.DigitalLastCustom2.MaximumSize = new System.Drawing.Size(26, 26);
@@ -537,29 +571,33 @@ namespace LedsGUI
             this.DigitalLastCustom2.Name = "DigitalLastCustom2";
             this.DigitalLastCustom2.Size = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom2.TabIndex = 1;
-            this.DigitalLastCustom2.UseVisualStyleBackColor = true;
+            this.DigitalLastCustom2.UseVisualStyleBackColor = false;
             this.DigitalLastCustom2.Click += new System.EventHandler(this.DigitalLastCustomColor);
             // 
             // DigitalLastCustom5
             // 
+            this.DigitalLastCustom5.BackColor = global::LedsGUI.Properties.Settings.Default.digitalLastColor5;
+            this.DigitalLastCustom5.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "digitalLastColor5", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.DigitalLastCustom5.Location = new System.Drawing.Point(127, 3);
             this.DigitalLastCustom5.MaximumSize = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom5.MinimumSize = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom5.Name = "DigitalLastCustom5";
             this.DigitalLastCustom5.Size = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom5.TabIndex = 4;
-            this.DigitalLastCustom5.UseVisualStyleBackColor = true;
+            this.DigitalLastCustom5.UseVisualStyleBackColor = false;
             this.DigitalLastCustom5.Click += new System.EventHandler(this.DigitalLastCustomColor);
             // 
             // DigitalLastCustom6
             // 
+            this.DigitalLastCustom6.BackColor = global::LedsGUI.Properties.Settings.Default.digitalLastColor6;
+            this.DigitalLastCustom6.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "digitalLastColor6", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.DigitalLastCustom6.Location = new System.Drawing.Point(158, 3);
             this.DigitalLastCustom6.MaximumSize = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom6.MinimumSize = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom6.Name = "DigitalLastCustom6";
             this.DigitalLastCustom6.Size = new System.Drawing.Size(26, 26);
             this.DigitalLastCustom6.TabIndex = 5;
-            this.DigitalLastCustom6.UseVisualStyleBackColor = true;
+            this.DigitalLastCustom6.UseVisualStyleBackColor = false;
             this.DigitalLastCustom6.Click += new System.EventHandler(this.DigitalLastCustomColor);
             // 
             // DigitalBrightScroll
@@ -596,6 +634,20 @@ namespace LedsGUI
             this.label11.Text = "Digital Strip";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // DigitalCustomPrincipal
+            // 
+            this.DigitalCustomPrincipal.BackColor = global::LedsGUI.Properties.Settings.Default.DigitalLastCustomColorPrincipal;
+            this.DigitalCustomPrincipal.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::LedsGUI.Properties.Settings.Default, "DigitalLastCustomColorPrincipal", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.DigitalCustomPrincipal.Location = new System.Drawing.Point(8, 76);
+            this.DigitalCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
+            this.DigitalCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
+            this.DigitalCustomPrincipal.Name = "DigitalCustomPrincipal";
+            this.DigitalCustomPrincipal.Size = new System.Drawing.Size(35, 35);
+            this.DigitalCustomPrincipal.TabIndex = 8;
+            this.DigitalCustomPrincipal.UseVisualStyleBackColor = false;
+            this.DigitalCustomPrincipal.DoubleClick += new System.EventHandler(this.DigitalCustomPrincipal_DoubleClick);
+            this.DigitalCustomPrincipal.Click += new System.EventHandler(this.DigitalCustomPrincipal_Click);
+            // 
             // DigitalComboBox
             // 
             this.DigitalComboBox.FormattingEnabled = true;
@@ -629,6 +681,12 @@ namespace LedsGUI
             this.MessageStatusLabel.Size = new System.Drawing.Size(53, 17);
             this.MessageStatusLabel.Text = "Message";
             // 
+            // MusicalRealSamplingToolStripStatusLabel
+            // 
+            this.MusicalRealSamplingToolStripStatusLabel.Name = "MusicalRealSamplingToolStripStatusLabel";
+            this.MusicalRealSamplingToolStripStatusLabel.Size = new System.Drawing.Size(120, 17);
+            this.MusicalRealSamplingToolStripStatusLabel.Text = "MusicalRealSampling";
+            // 
             // VisualizationTimer
             // 
             this.VisualizationTimer.Interval = 1;
@@ -638,36 +696,6 @@ namespace LedsGUI
             // 
             this.StartUpWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.StartUpWorker_DoWork);
             this.StartUpWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.SetStartUpWorker_RunWorkerCompleted);
-            // 
-            // AnalogCustomPrincipal
-            // 
-            this.AnalogCustomPrincipal.Location = new System.Drawing.Point(12, 76);
-            this.AnalogCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
-            this.AnalogCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
-            this.AnalogCustomPrincipal.Name = "AnalogCustomPrincipal";
-            this.AnalogCustomPrincipal.Size = new System.Drawing.Size(35, 35);
-            this.AnalogCustomPrincipal.TabIndex = 0;
-            this.AnalogCustomPrincipal.UseVisualStyleBackColor = true;
-            this.AnalogCustomPrincipal.DoubleClick += new System.EventHandler(this.AnalogCustomPrincipal_DoubleClick);
-            this.AnalogCustomPrincipal.Click += new System.EventHandler(this.AnalogCustomPrincipal_Click);
-            // 
-            // DigitalCustomPrincipal
-            // 
-            this.DigitalCustomPrincipal.Location = new System.Drawing.Point(8, 76);
-            this.DigitalCustomPrincipal.MaximumSize = new System.Drawing.Size(35, 35);
-            this.DigitalCustomPrincipal.MinimumSize = new System.Drawing.Size(35, 35);
-            this.DigitalCustomPrincipal.Name = "DigitalCustomPrincipal";
-            this.DigitalCustomPrincipal.Size = new System.Drawing.Size(35, 35);
-            this.DigitalCustomPrincipal.TabIndex = 8;
-            this.DigitalCustomPrincipal.UseVisualStyleBackColor = true;
-            this.DigitalCustomPrincipal.DoubleClick += new System.EventHandler(this.DigitalCustomPrincipal_DoubleClick);
-            this.DigitalCustomPrincipal.Click += new System.EventHandler(this.DigitalCustomPrincipal_Click);
-            // 
-            // MusicalRealSamplingToolStripStatusLabel
-            // 
-            this.MusicalRealSamplingToolStripStatusLabel.Name = "MusicalRealSamplingToolStripStatusLabel";
-            this.MusicalRealSamplingToolStripStatusLabel.Size = new System.Drawing.Size(120, 17);
-            this.MusicalRealSamplingToolStripStatusLabel.Text = "MusicalRealSampling";
             // 
             // LedController
             // 
@@ -765,10 +793,10 @@ namespace LedsGUI
         private System.Windows.Forms.Timer VisualizationTimer;
         private System.ComponentModel.BackgroundWorker StartUpWorker;
         private System.Windows.Forms.ToolStripMenuItem showSketchToolStripMenuItem;
-        private static BackgroundWorker TempWorker;
         private System.Windows.Forms.ToolStripStatusLabel ComPortStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel MessageStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel MusicalRealSamplingToolStripStatusLabel;
+        private static BackgroundWorker TempWorker;
     }
 }
 

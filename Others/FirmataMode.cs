@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace LedsGUI
 {
     [Serializable]
+    [SettingsSerializeAs(SettingsSerializeAs.Binary)]
     public class FirmataMode
     {
         public enum MoreMode { none, analogMusical, digitalMusical, digitalCustomPattern }

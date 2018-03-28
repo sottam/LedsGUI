@@ -4,11 +4,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace LedsGUI
 {
     [Serializable]
-    public class CustomPalette
+    [SettingsSerializeAs(SettingsSerializeAs.Binary)]
+    public class CustomPalette 
     {
         public enum PaletteSize { P16, P32, P256 };
 

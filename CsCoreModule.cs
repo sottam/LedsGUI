@@ -17,25 +17,21 @@ using CSCore.Win32;
 
 namespace LedsGUI
 {
-
-
-
     public class CsCoreModule : IDisposable
     {
         private WasapiCapture _soundIn;
         private IWaveSource _source;
         private PitchShifter _pitchShifter;
 
-        public LineSpectrum _lineSpectrum; //analog
+        public LineSpectrum         _lineSpectrum; //analog
         public VoicePrint3DSpectrum _voicePrint3DSpectrum; //analog
 
-        public LineSpectrum _DigitallineSpectrum; //digital
-
+        public LineSpectrum         _DigitallineSpectrum;
         public VoicePrint3DSpectrum _DigitalBassPrint3DSpectrum;
-        //public VoicePrint3DSpectrum _DigitalvoicePrint3DSpectrum; //digital
         public VoicePrint3DSpectrum _DigitalMedioPrint3DSpectrum;
         public VoicePrint3DSpectrum _DigitaltreblePrint3DSpectrum;
-        public LineSpectrum _GenericlineSpectrum; //generic
+
+        public LineSpectrum         _GenericlineSpectrum; //generic
         public VoicePrint3DSpectrum _GenericvoicePrint3DSpectrum; //generic
 
         BasicSpectrumProvider spectrumProvider;

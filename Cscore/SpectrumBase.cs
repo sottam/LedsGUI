@@ -156,7 +156,8 @@ namespace WinformsVisualization.Visualization
             }
         }
 
-        protected virtual SpectrumPointData[] CalculateSpectrumPoints(double maxValue, float[] fftBuffer, decimal scaleFactorLinear = 9)
+        protected virtual SpectrumPointData[] CalculateSpectrumPoints(double maxValue, float[] fftBuffer, 
+                                              decimal scaleFactorLinear = 9, decimal scaleFactorSqrt = 2)
         {
             var dataPoints = new List<SpectrumPointData>();
 
@@ -176,7 +177,7 @@ namespace WinformsVisualization.Visualization
                         value0 = (fftBuffer[i] * Convert.ToDouble(scaleFactorLinear)) * actualMaxValue;
                         break;
                     case ScalingStrategy.Sqrt:
-                        value0 = ((Math.Sqrt(fftBuffer[i])) * ScaleFactorSqr) * actualMaxValue;
+                        value0 = ((Math.Sqrt(fftBuffer[i])) * Convert.ToDouble(scaleFactorSqrt)) * actualMaxValue;
                         break;
                 }
 

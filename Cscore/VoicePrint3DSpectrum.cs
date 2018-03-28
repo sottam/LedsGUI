@@ -15,6 +15,10 @@ namespace LedsGUI.Cscore
         public static decimal medioFactor = 21;
         public static decimal bassFactor = 8;
 
+        public static decimal trebleFactorSqrt = 2;
+        public static decimal MedioFactorSqrt = 2;
+        public static decimal BassFactorSqrt = 2;
+
         private readonly GradientCalculator _colorCalculator;
         private bool _isInitialized;
 
@@ -76,13 +80,13 @@ namespace LedsGUI.Cscore
                         spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer);
                         break;
                     case DrawPurpose.ForDigitalBass:
-                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, bassFactor);
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, bassFactor, BassFactorSqrt);
                         break;
                     case DrawPurpose.ForDigitalMedio:
-                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, medioFactor);
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, medioFactor, MedioFactorSqrt);
                         break;
                     case DrawPurpose.ForDigitalTreble:
-                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, trebleFactor);
+                        spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer, trebleFactor, trebleFactorSqrt);
                         break;
                     case DrawPurpose.ForGeneric:
                         spectrumPoints = CalculateSpectrumPoints(0.99, fftBuffer);

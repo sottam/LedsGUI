@@ -40,7 +40,7 @@ namespace LedsGUI
 
         private MusicalMode MusicalModeForm = new MusicalMode();
         private IntegratedVisualization visualization = new IntegratedVisualization();
-        private DigitalMusicalMode DigitalMusicalModeForm = new DigitalMusicalMode();
+        private DigitalMusicalMode DigitalMusicalModeForm;
         private DigitalCustomPaletteMode DigitalCustomPaletteMode = new DigitalCustomPaletteMode();
 
         private CustomPalette LastActivatedPalette;
@@ -96,27 +96,22 @@ namespace LedsGUI
         {
             try
             {
-                Settings s = Settings.Load();
-                if (s == null) return;
+
+                SelectedComPort = Properties.Settings.Default.COMPort;
+
+                AnalogComboBox.SelectedIndex = Properties.Settings.Default.AnalogLastMode;
+                DigitalComboBox.SelectedIndex = Properties.Settings.Default.DigitalLastMode;
+
                 foreach (Control item in AnalogCustomButtons)
-                {
-                    if (s.AnalogBackColors[item.Name].Equals(Color.Transparent) == false)
-                        AnalogCustomColors.Enqueue(s.AnalogBackColors[item.Name]);  
-                }
+                    if (item.BackColor.Equals(SystemColors.Control) == false)
+                        AnalogCustomColors.Enqueue(item.BackColor);
 
                 foreach (Control item in DigitalCustomButtons)
-                {
-                    if (s.DigitalBackColors[item.Name].Equals(Color.Transparent) == false)
-                        DigitalCustomColors.Enqueue(s.DigitalBackColors[item.Name]);
-                }
+                    if (item.BackColor.Equals(SystemColors.Control) == false)
+                        DigitalCustomColors.Enqueue(item.BackColor);
 
-                AnalogCustomPrincipal.BackColor = s.AnalogFixedCustomColor;
-                DigitalCustomPrincipal.BackColor = s.DigitalFixedCustomColor;
-
-                SelectedComPort = s.SelectedArduinoPort;
-
-                AnalogComboBox.SelectedIndex = s.AnalogSelectedModeIndex;
-                DigitalComboBox.SelectedIndex = s.DigitalSelectedModeIndex;
+                Settings s = Settings.Load();
+                if (s == null) return;
 
                 UpdateAnalogCustomButtons();
                 UpdateDigitalCustomButtons();
@@ -141,7 +136,7 @@ namespace LedsGUI
             }
             catch (Exception e )
             {
-                Console.WriteLine("Ërro ao carregar configs: " + e.Message);
+                Console.WriteLine("Erro ao carregar configs: " + e.Message);
             } 
         }
 
@@ -149,28 +144,22 @@ namespace LedsGUI
         {
             try
             {
-                Settings s = new Settings();
-                foreach (Control item in AnalogCustomButtons)            
-                    s.AnalogBackColors.Add(item.Name, item.BackColor);
+                Properties.Settings.Default.COMPort = SelectedComPort;
 
-                foreach (Control item in DigitalCustomButtons)
-                    s.DigitalBackColors.Add(item.Name, item.BackColor);
+                Properties.Settings.Default.AnalogLastMode = AnalogComboBox.SelectedIndex;
+                Properties.Settings.Default.DigitalLastMode = DigitalComboBox.SelectedIndex;
+                Properties.Settings.Default.Save();
+                
+                Settings s = new Settings();
 
                 s.AnalogModesAvailable = firmata.AnalogModesAvailable;
                 s.DigitalModesAvailable = firmata.DigitalModesAvailable;
-
-                s.AnalogFixedCustomColor = AnalogCustomPrincipal.BackColor;
-                s.DigitalFixedCustomColor = DigitalCustomPrincipal.BackColor ;
-
-                s.SelectedArduinoPort = SelectedComPort;
-
-                s.AnalogSelectedModeIndex = AnalogComboBox.SelectedIndex;
-                s.DigitalSelectedModeIndex = DigitalComboBox.SelectedIndex;
 
                 if (s.LastActivatedPalette != null)
                     s.LastActivatedPalette = LastActivatedPalette;
 
                 s.Save();
+
             }
             catch (Exception e )
             {
@@ -209,8 +198,9 @@ namespace LedsGUI
             visualization.GenericSoundBarPropertyGrid.SelectedObject = cscore._GenericlineSpectrum;
             visualization.GenericSoundSpectrumPropertyGrid.SelectedObject = cscore._GenericvoicePrint3DSpectrum;
 
+            DigitalMusicalModeForm = new DigitalMusicalMode(cscore);
             MusicalModeForm.CsCoreMod = cscore;
-            DigitalMusicalModeForm.CsCoreMod = cscore;
+            //DigitalMusicalModeForm.CsCoreMod = cscore;
 
             visualization.VisibleChanged += Visualization_VisibleChanged;
 

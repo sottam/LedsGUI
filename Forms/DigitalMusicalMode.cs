@@ -18,16 +18,81 @@ namespace LedsGUI
 
         private PictureBox LastPictureBoxClicked;
 
-        public DigitalMusicalMode()
+        public DigitalMusicalMode(CsCoreModule cscore)
         {
             InitializeComponent();
+
+            CsCoreMod = cscore;
+
+            CsCoreMod._DigitaltreblePrint3DSpectrum.UseAverage = Properties.Settings.Default.TrebleUseAverage;
+            CsCoreMod._DigitaltreblePrint3DSpectrum.IsXLogScale = Properties.Settings.Default.TrebleIsXLogScale;
+            CsCoreMod._DigitaltreblePrint3DSpectrum.MinimumFrequency = Properties.Settings.Default.TrebleMinFreq;
+            CsCoreMod._DigitaltreblePrint3DSpectrum.MaximumFrequency = Properties.Settings.Default.TrebleMaxFreq;
+            switch (Properties.Settings.Default.TrebleScaling)
+            {
+                case 0:
+                    CsCoreMod._DigitaltreblePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Decibel;
+                    break;
+                case 1:
+                    CsCoreMod._DigitaltreblePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+                    break;
+                case 2:
+                    CsCoreMod._DigitaltreblePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Sqrt;
+                    break;
+                default:
+                    CsCoreMod._DigitaltreblePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+                    break;
+            }
+            
+            CsCoreMod._DigitalMedioPrint3DSpectrum.UseAverage = Properties.Settings.Default.MediumUseAverage;
+            CsCoreMod._DigitalMedioPrint3DSpectrum.IsXLogScale = Properties.Settings.Default.MediumIsXLogScale;
+            CsCoreMod._DigitalMedioPrint3DSpectrum.MinimumFrequency = Properties.Settings.Default.MediumMinFreq;
+            CsCoreMod._DigitalMedioPrint3DSpectrum.MaximumFrequency = Properties.Settings.Default.MediumMaxFreq;
+            switch (Properties.Settings.Default.MediumScaling)
+            {
+                case 0:
+                    CsCoreMod._DigitalMedioPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Decibel;
+                    break;
+                case 1:
+                    CsCoreMod._DigitalMedioPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+                    break;
+                case 2:
+                    CsCoreMod._DigitalMedioPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Sqrt;
+                    break;
+                default:
+                    CsCoreMod._DigitalMedioPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+                    break;
+            }
+            CsCoreMod._DigitalBassPrint3DSpectrum.UseAverage = Properties.Settings.Default.BassUseAverage;
+            CsCoreMod._DigitalBassPrint3DSpectrum.IsXLogScale = Properties.Settings.Default.BassIsXLogScale;
+            CsCoreMod._DigitalBassPrint3DSpectrum.MinimumFrequency = Properties.Settings.Default.BassMinFreq;
+            CsCoreMod._DigitalBassPrint3DSpectrum.MaximumFrequency = Properties.Settings.Default.BassMaxFreq;
+            switch (Properties.Settings.Default.BassScaling)
+            {
+                case 0:
+                    CsCoreMod._DigitalBassPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Decibel;
+                    break;
+                case 1:
+                    CsCoreMod._DigitalBassPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+                    break;
+                case 2:
+                    CsCoreMod._DigitalBassPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Sqrt;
+                    break;
+                default:
+                    CsCoreMod._DigitalBassPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+                    break;
+            }
         }
 
         private void DigitalMusicalMode_Load(object sender, EventArgs e)
         {
-            TrebleNumericUpDown.Value = VoicePrint3DSpectrum.trebleFactor;
-            MedioNumericUpDown.Value = VoicePrint3DSpectrum.medioFactor;
-            BassNumericUpDown.Value = VoicePrint3DSpectrum.bassFactor;
+            VoicePrint3DSpectrum.trebleFactor = TrebleNumericUpDown.Value;
+            VoicePrint3DSpectrum.medioFactor = MedioNumericUpDown.Value;
+            VoicePrint3DSpectrum.bassFactor = BassNumericUpDown.Value;
+
+            VoicePrint3DSpectrum.trebleFactorSqrt = TrebleSqrtNumericUpDown.Value;
+            VoicePrint3DSpectrum.MedioFactorSqrt = MedioSqrtNumericUpDown.Value;
+            VoicePrint3DSpectrum.BassFactorSqrt = BassSqrtNumericUpDown.Value;
 
             TreblePropertyGrid.SelectedObject = CsCoreMod._DigitaltreblePrint3DSpectrum;
             MedioPropertyGrid.SelectedObject = CsCoreMod._DigitalMedioPrint3DSpectrum;
@@ -348,6 +413,48 @@ namespace LedsGUI
         private void BassNumericUpDown_ValueChanged(object sender, EventArgs e)
         {
             VoicePrint3DSpectrum.bassFactor = BassNumericUpDown.Value;
+        }
+
+        private void TreblePropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            Properties.Settings.Default.TrebleUseAverage = CsCoreMod._DigitaltreblePrint3DSpectrum.UseAverage;
+            Properties.Settings.Default.TrebleIsXLogScale = CsCoreMod._DigitaltreblePrint3DSpectrum.IsXLogScale;
+            Properties.Settings.Default.TrebleMinFreq = CsCoreMod._DigitaltreblePrint3DSpectrum.MinimumFrequency;
+            Properties.Settings.Default.TrebleMaxFreq = CsCoreMod._DigitaltreblePrint3DSpectrum.MaximumFrequency;
+            Properties.Settings.Default.TrebleScaling = (int)CsCoreMod._DigitaltreblePrint3DSpectrum.ScalingStrategy;
+        }
+
+        private void MedioPropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            Properties.Settings.Default.MediumUseAverage = CsCoreMod._DigitalMedioPrint3DSpectrum.UseAverage;
+            Properties.Settings.Default.MediumIsXLogScale = CsCoreMod._DigitalMedioPrint3DSpectrum.IsXLogScale;
+            Properties.Settings.Default.MediumMinFreq = CsCoreMod._DigitalMedioPrint3DSpectrum.MinimumFrequency;
+            Properties.Settings.Default.MediumMaxFreq = CsCoreMod._DigitalMedioPrint3DSpectrum.MaximumFrequency;
+            Properties.Settings.Default.MediumScaling = (int)CsCoreMod._DigitalMedioPrint3DSpectrum.ScalingStrategy;
+        }
+
+        private void BassPropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            Properties.Settings.Default.BassUseAverage = CsCoreMod._DigitalBassPrint3DSpectrum.UseAverage;
+            Properties.Settings.Default.BassIsXLogScale = CsCoreMod._DigitalBassPrint3DSpectrum.IsXLogScale;
+            Properties.Settings.Default.BassMinFreq = CsCoreMod._DigitalBassPrint3DSpectrum.MinimumFrequency;
+            Properties.Settings.Default.BassMaxFreq = CsCoreMod._DigitalBassPrint3DSpectrum.MaximumFrequency;
+            Properties.Settings.Default.BassScaling = (int)CsCoreMod._DigitalBassPrint3DSpectrum.ScalingStrategy;
+        }
+
+        private void TrebleSqrtNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            VoicePrint3DSpectrum.trebleFactorSqrt = TrebleSqrtNumericUpDown.Value;
+        }
+
+        private void MedioSqrtNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            VoicePrint3DSpectrum.MedioFactorSqrt = MedioSqrtNumericUpDown.Value;
+        }
+
+        private void BassSqrtNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            VoicePrint3DSpectrum.BassFactorSqrt = BassSqrtNumericUpDown.Value;
         }
     }
 }
