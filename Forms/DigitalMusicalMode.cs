@@ -237,16 +237,25 @@ namespace LedsGUI
                         squareRootToolStripMenuItem.Checked = true;
                         decibelToolStripMenuItem.Checked = false;
                         linearToolStripMenuItem.Checked = false;
+                        exponentialToolStripMenuItem.Checked = false;
                         break;
                     case ScalingStrategy.Decibel:
                         squareRootToolStripMenuItem.Checked = false;
                         decibelToolStripMenuItem.Checked = true;
                         linearToolStripMenuItem.Checked = false;
+                        exponentialToolStripMenuItem.Checked = false;
                         break;
                     case ScalingStrategy.Linear:
                         squareRootToolStripMenuItem.Checked = false;
                         decibelToolStripMenuItem.Checked = false;
                         linearToolStripMenuItem.Checked = true;
+                        exponentialToolStripMenuItem.Checked = false;
+                        break;
+                    case ScalingStrategy.Exponential:
+                        squareRootToolStripMenuItem.Checked = false;
+                        decibelToolStripMenuItem.Checked = false;
+                        linearToolStripMenuItem.Checked = false;
+                        exponentialToolStripMenuItem.Checked = true;
                         break;
                 }
             }
@@ -380,6 +389,26 @@ namespace LedsGUI
             else if (LastPictureBoxClicked.Equals(DigitalSoundBars))
             {
                 CsCoreMod._DigitallineSpectrum.ScalingStrategy = ScalingStrategy.Linear;
+            }
+        }
+
+        private void exponentialToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (LastPictureBoxClicked.Equals(TreblePictureBox))
+            {
+                CsCoreMod._DigitaltreblePrint3DSpectrum.ScalingStrategy = ScalingStrategy.Exponential;
+            }
+            else if (LastPictureBoxClicked.Equals(MedioPictureBox))
+            {
+                CsCoreMod._DigitalMedioPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Exponential;
+            }
+            else if (LastPictureBoxClicked.Equals(BassPictureBox))
+            {
+                CsCoreMod._DigitalBassPrint3DSpectrum.ScalingStrategy = ScalingStrategy.Exponential;
+            }
+            else if (LastPictureBoxClicked.Equals(DigitalSoundBars))
+            {
+                CsCoreMod._DigitallineSpectrum.ScalingStrategy = ScalingStrategy.Exponential;
             }
         }
 

@@ -42,6 +42,7 @@
             this.decibelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.linearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useAverageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exponentialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -96,7 +97,7 @@
             this.scalingStrategyToolStripMenuItem,
             this.useAverageToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(159, 98);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(159, 120);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // alwaysOnTopToolStripMenuItem
@@ -123,7 +124,8 @@
             this.scalingStrategyToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.squareRootToolStripMenuItem,
             this.decibelToolStripMenuItem,
-            this.linearToolStripMenuItem});
+            this.linearToolStripMenuItem,
+            this.exponentialToolStripMenuItem});
             this.scalingStrategyToolStripMenuItem.Name = "scalingStrategyToolStripMenuItem";
             this.scalingStrategyToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.scalingStrategyToolStripMenuItem.Text = "Scaling Strategy";
@@ -131,21 +133,21 @@
             // squareRootToolStripMenuItem
             // 
             this.squareRootToolStripMenuItem.Name = "squareRootToolStripMenuItem";
-            this.squareRootToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.squareRootToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.squareRootToolStripMenuItem.Text = "Square root";
             this.squareRootToolStripMenuItem.Click += new System.EventHandler(this.squareRootToolStripMenuItem_Click);
             // 
             // decibelToolStripMenuItem
             // 
             this.decibelToolStripMenuItem.Name = "decibelToolStripMenuItem";
-            this.decibelToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.decibelToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.decibelToolStripMenuItem.Text = "Decibel";
             this.decibelToolStripMenuItem.Click += new System.EventHandler(this.decibelToolStripMenuItem_Click);
             // 
             // linearToolStripMenuItem
             // 
             this.linearToolStripMenuItem.Name = "linearToolStripMenuItem";
-            this.linearToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.linearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.linearToolStripMenuItem.Text = "Linear";
             this.linearToolStripMenuItem.Click += new System.EventHandler(this.linearToolStripMenuItem_Click);
             // 
@@ -155,6 +157,13 @@
             this.useAverageToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.useAverageToolStripMenuItem.Text = "Use Average";
             this.useAverageToolStripMenuItem.Click += new System.EventHandler(this.useAverageToolStripMenuItem_Click);
+            // 
+            // exponentialToolStripMenuItem
+            // 
+            this.exponentialToolStripMenuItem.Name = "exponentialToolStripMenuItem";
+            this.exponentialToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exponentialToolStripMenuItem.Text = "Exponential";
+            this.exponentialToolStripMenuItem.Click += new System.EventHandler(this.exponentialToolStripMenuItem_Click);
             // 
             // MusicalMode
             // 
@@ -194,5 +203,6 @@
         private System.Windows.Forms.ToolStripMenuItem decibelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem linearToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem useAverageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exponentialToolStripMenuItem;
     }
 }

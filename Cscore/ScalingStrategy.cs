@@ -4,6 +4,7 @@
     {
         Decibel,
         Linear,
-        Sqrt
+        Sqrt,
+        Exponential
     }
 }

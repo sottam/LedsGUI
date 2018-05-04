@@ -49,32 +49,33 @@
             this.TreblePictureBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.TreblePropertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.TrebleSqrtNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.TrebleNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.MedioPictureBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.MedioPropertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.MedioSqrtNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
+            this.MedioNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.BassPictureBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.BassPropertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.TrebleSqrtNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.TrebleNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.MedioSqrtNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.MedioNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.BassSqrtNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
             this.BassNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
+            this.exponentialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -88,29 +89,29 @@
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TreblePictureBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrebleSqrtNumericUpDown)).BeginInit();
+            this.tableLayoutPanel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrebleNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MedioPictureBox)).BeginInit();
             this.tableLayoutPanel3.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MedioSqrtNumericUpDown)).BeginInit();
+            this.tableLayoutPanel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MedioNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BassPictureBox)).BeginInit();
             this.tableLayoutPanel4.SuspendLayout();
-            this.tableLayoutPanel5.SuspendLayout();
-            this.tableLayoutPanel6.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
-            this.tableLayoutPanel8.SuspendLayout();
-            this.tableLayoutPanel9.SuspendLayout();
-            this.tableLayoutPanel10.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TrebleSqrtNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TrebleNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MedioSqrtNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MedioNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BassSqrtNumericUpDown)).BeginInit();
+            this.tableLayoutPanel10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BassNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
@@ -157,7 +158,7 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.ShowCheckMargin = true;
             this.contextMenuStrip1.ShowImageMargin = false;
-            this.contextMenuStrip1.Size = new System.Drawing.Size(161, 151);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(161, 173);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // NameToolStripTextBox
@@ -182,7 +183,8 @@
             this.scalingStrategyToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.squareRootToolStripMenuItem,
             this.decibelToolStripMenuItem,
-            this.linearToolStripMenuItem});
+            this.linearToolStripMenuItem,
+            this.exponentialToolStripMenuItem});
             this.scalingStrategyToolStripMenuItem.Name = "scalingStrategyToolStripMenuItem";
             this.scalingStrategyToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.scalingStrategyToolStripMenuItem.Text = "Scaling Strategy";
@@ -190,21 +192,21 @@
             // squareRootToolStripMenuItem
             // 
             this.squareRootToolStripMenuItem.Name = "squareRootToolStripMenuItem";
-            this.squareRootToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.squareRootToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.squareRootToolStripMenuItem.Text = "Square Root";
             this.squareRootToolStripMenuItem.Click += new System.EventHandler(this.squareRootToolStripMenuItem_Click);
             // 
             // decibelToolStripMenuItem
             // 
             this.decibelToolStripMenuItem.Name = "decibelToolStripMenuItem";
-            this.decibelToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.decibelToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.decibelToolStripMenuItem.Text = "Decibel";
             this.decibelToolStripMenuItem.Click += new System.EventHandler(this.decibelToolStripMenuItem_Click);
             // 
             // linearToolStripMenuItem
             // 
             this.linearToolStripMenuItem.Name = "linearToolStripMenuItem";
-            this.linearToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.linearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.linearToolStripMenuItem.Text = "Linear";
             this.linearToolStripMenuItem.Click += new System.EventHandler(this.linearToolStripMenuItem_Click);
             // 
@@ -297,7 +299,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(165, 107);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(96, 100);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // TreblePropertyGrid
@@ -307,10 +309,94 @@
             this.TreblePropertyGrid.HelpVisible = false;
             this.TreblePropertyGrid.Location = new System.Drawing.Point(3, 3);
             this.TreblePropertyGrid.Name = "TreblePropertyGrid";
-            this.TreblePropertyGrid.Size = new System.Drawing.Size(159, 51);
+            this.TreblePropertyGrid.Size = new System.Drawing.Size(90, 44);
             this.TreblePropertyGrid.TabIndex = 2;
             this.TreblePropertyGrid.ToolbarVisible = false;
             this.TreblePropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.TreblePropertyGrid_PropertyValueChanged);
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.TrebleSqrtNumericUpDown, 1, 0);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 75);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(96, 25);
+            this.tableLayoutPanel5.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(42, 25);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Sqrt:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // TrebleSqrtNumericUpDown
+            // 
+            this.TrebleSqrtNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "TrebleSqrtFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.TrebleSqrtNumericUpDown.DecimalPlaces = 2;
+            this.TrebleSqrtNumericUpDown.Location = new System.Drawing.Point(51, 3);
+            this.TrebleSqrtNumericUpDown.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.TrebleSqrtNumericUpDown.Name = "TrebleSqrtNumericUpDown";
+            this.TrebleSqrtNumericUpDown.Size = new System.Drawing.Size(42, 20);
+            this.TrebleSqrtNumericUpDown.TabIndex = 1;
+            this.TrebleSqrtNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.TrebleSqrtFactor;
+            this.TrebleSqrtNumericUpDown.ValueChanged += new System.EventHandler(this.TrebleSqrtNumericUpDown_ValueChanged);
+            // 
+            // tableLayoutPanel8
+            // 
+            this.tableLayoutPanel8.ColumnCount = 2;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.Controls.Add(this.TrebleNumericUpDown, 1, 0);
+            this.tableLayoutPanel8.Controls.Add(this.label4, 0, 0);
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(0, 50);
+            this.tableLayoutPanel8.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
+            this.tableLayoutPanel8.RowCount = 1;
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(96, 25);
+            this.tableLayoutPanel8.TabIndex = 5;
+            // 
+            // TrebleNumericUpDown
+            // 
+            this.TrebleNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "TrebleFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.TrebleNumericUpDown.DecimalPlaces = 2;
+            this.TrebleNumericUpDown.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TrebleNumericUpDown.Location = new System.Drawing.Point(51, 3);
+            this.TrebleNumericUpDown.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.TrebleNumericUpDown.Name = "TrebleNumericUpDown";
+            this.TrebleNumericUpDown.Size = new System.Drawing.Size(42, 20);
+            this.TrebleNumericUpDown.TabIndex = 5;
+            this.TrebleNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.TrebleFactor;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Location = new System.Drawing.Point(3, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(42, 25);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Linear:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // splitContainer3
             // 
@@ -358,7 +444,7 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(165, 107);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(96, 100);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
             // MedioPropertyGrid
@@ -367,10 +453,94 @@
             this.MedioPropertyGrid.HelpVisible = false;
             this.MedioPropertyGrid.Location = new System.Drawing.Point(3, 3);
             this.MedioPropertyGrid.Name = "MedioPropertyGrid";
-            this.MedioPropertyGrid.Size = new System.Drawing.Size(159, 51);
+            this.MedioPropertyGrid.Size = new System.Drawing.Size(90, 44);
             this.MedioPropertyGrid.TabIndex = 1;
             this.MedioPropertyGrid.ToolbarVisible = false;
             this.MedioPropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.MedioPropertyGrid_PropertyValueChanged);
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 2;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel6.Controls.Add(this.label2, 0, 0);
+            this.tableLayoutPanel6.Controls.Add(this.MedioSqrtNumericUpDown, 1, 0);
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(0, 75);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 1;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(96, 25);
+            this.tableLayoutPanel6.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Location = new System.Drawing.Point(3, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(42, 25);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Sqrt:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // MedioSqrtNumericUpDown
+            // 
+            this.MedioSqrtNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "MedioSqrtFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.MedioSqrtNumericUpDown.DecimalPlaces = 2;
+            this.MedioSqrtNumericUpDown.Location = new System.Drawing.Point(51, 3);
+            this.MedioSqrtNumericUpDown.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.MedioSqrtNumericUpDown.Name = "MedioSqrtNumericUpDown";
+            this.MedioSqrtNumericUpDown.Size = new System.Drawing.Size(42, 20);
+            this.MedioSqrtNumericUpDown.TabIndex = 1;
+            this.MedioSqrtNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.MedioSqrtFactor;
+            this.MedioSqrtNumericUpDown.ValueChanged += new System.EventHandler(this.MedioSqrtNumericUpDown_ValueChanged);
+            // 
+            // tableLayoutPanel9
+            // 
+            this.tableLayoutPanel9.ColumnCount = 2;
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.Controls.Add(this.MedioNumericUpDown, 1, 0);
+            this.tableLayoutPanel9.Controls.Add(this.label5, 0, 0);
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(0, 50);
+            this.tableLayoutPanel9.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
+            this.tableLayoutPanel9.RowCount = 1;
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(96, 25);
+            this.tableLayoutPanel9.TabIndex = 4;
+            // 
+            // MedioNumericUpDown
+            // 
+            this.MedioNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "MediumFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.MedioNumericUpDown.DecimalPlaces = 2;
+            this.MedioNumericUpDown.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MedioNumericUpDown.Location = new System.Drawing.Point(51, 3);
+            this.MedioNumericUpDown.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.MedioNumericUpDown.Name = "MedioNumericUpDown";
+            this.MedioNumericUpDown.Size = new System.Drawing.Size(42, 20);
+            this.MedioNumericUpDown.TabIndex = 4;
+            this.MedioNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.MediumFactor;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label5.Location = new System.Drawing.Point(3, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(42, 25);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Linear:";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // splitContainer4
             // 
@@ -412,13 +582,13 @@
             this.tableLayoutPanel4.Controls.Add(this.tableLayoutPanel10, 0, 1);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 3;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(165, 109);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(96, 100);
             this.tableLayoutPanel4.TabIndex = 0;
             // 
             // BassPropertyGrid
@@ -427,40 +597,10 @@
             this.BassPropertyGrid.HelpVisible = false;
             this.BassPropertyGrid.Location = new System.Drawing.Point(3, 3);
             this.BassPropertyGrid.Name = "BassPropertyGrid";
-            this.BassPropertyGrid.Size = new System.Drawing.Size(159, 53);
+            this.BassPropertyGrid.Size = new System.Drawing.Size(90, 44);
             this.BassPropertyGrid.TabIndex = 1;
             this.BassPropertyGrid.ToolbarVisible = false;
             this.BassPropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.BassPropertyGrid_PropertyValueChanged);
-            // 
-            // tableLayoutPanel5
-            // 
-            this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.TrebleSqrtNumericUpDown, 1, 0);
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 82);
-            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 1;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(165, 25);
-            this.tableLayoutPanel5.TabIndex = 4;
-            // 
-            // tableLayoutPanel6
-            // 
-            this.tableLayoutPanel6.ColumnCount = 2;
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.Controls.Add(this.label2, 0, 0);
-            this.tableLayoutPanel6.Controls.Add(this.MedioSqrtNumericUpDown, 1, 0);
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(0, 82);
-            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-            this.tableLayoutPanel6.RowCount = 1;
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(165, 25);
-            this.tableLayoutPanel6.TabIndex = 3;
             // 
             // tableLayoutPanel7
             // 
@@ -469,35 +609,13 @@
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel7.Controls.Add(this.label3, 0, 0);
             this.tableLayoutPanel7.Controls.Add(this.BassSqrtNumericUpDown, 1, 0);
-            this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 84);
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 75);
             this.tableLayoutPanel7.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
             this.tableLayoutPanel7.RowCount = 1;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(165, 25);
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(96, 25);
             this.tableLayoutPanel7.TabIndex = 3;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 25);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Sqrt:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Location = new System.Drawing.Point(3, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(76, 25);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Sqrt:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label3
             // 
@@ -505,40 +623,26 @@
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Location = new System.Drawing.Point(3, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(76, 25);
+            this.label3.Size = new System.Drawing.Size(42, 25);
             this.label3.TabIndex = 0;
             this.label3.Text = "Sqrt:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // tableLayoutPanel8
+            // BassSqrtNumericUpDown
             // 
-            this.tableLayoutPanel8.ColumnCount = 2;
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel8.Controls.Add(this.TrebleNumericUpDown, 1, 0);
-            this.tableLayoutPanel8.Controls.Add(this.label4, 0, 0);
-            this.tableLayoutPanel8.Location = new System.Drawing.Point(0, 57);
-            this.tableLayoutPanel8.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
-            this.tableLayoutPanel8.RowCount = 1;
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(165, 25);
-            this.tableLayoutPanel8.TabIndex = 5;
-            // 
-            // tableLayoutPanel9
-            // 
-            this.tableLayoutPanel9.ColumnCount = 2;
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel9.Controls.Add(this.MedioNumericUpDown, 1, 0);
-            this.tableLayoutPanel9.Controls.Add(this.label5, 0, 0);
-            this.tableLayoutPanel9.Location = new System.Drawing.Point(0, 57);
-            this.tableLayoutPanel9.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
-            this.tableLayoutPanel9.RowCount = 1;
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel9.Size = new System.Drawing.Size(165, 25);
-            this.tableLayoutPanel9.TabIndex = 4;
+            this.BassSqrtNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "BassSqrtFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.BassSqrtNumericUpDown.DecimalPlaces = 2;
+            this.BassSqrtNumericUpDown.Location = new System.Drawing.Point(51, 3);
+            this.BassSqrtNumericUpDown.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.BassSqrtNumericUpDown.Name = "BassSqrtNumericUpDown";
+            this.BassSqrtNumericUpDown.Size = new System.Drawing.Size(42, 20);
+            this.BassSqrtNumericUpDown.TabIndex = 1;
+            this.BassSqrtNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.BassSqrtFactor;
+            this.BassSqrtNumericUpDown.ValueChanged += new System.EventHandler(this.BassSqrtNumericUpDown_ValueChanged);
             // 
             // tableLayoutPanel10
             // 
@@ -547,35 +651,29 @@
             this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel10.Controls.Add(this.BassNumericUpDown, 1, 0);
             this.tableLayoutPanel10.Controls.Add(this.label6, 0, 0);
-            this.tableLayoutPanel10.Location = new System.Drawing.Point(0, 59);
+            this.tableLayoutPanel10.Location = new System.Drawing.Point(0, 50);
             this.tableLayoutPanel10.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel10.Name = "tableLayoutPanel10";
             this.tableLayoutPanel10.RowCount = 1;
             this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel10.Size = new System.Drawing.Size(165, 25);
+            this.tableLayoutPanel10.Size = new System.Drawing.Size(96, 25);
             this.tableLayoutPanel10.TabIndex = 4;
             // 
-            // label4
+            // BassNumericUpDown
             // 
-            this.label4.AutoSize = true;
-            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Location = new System.Drawing.Point(3, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(76, 25);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Linear:";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(3, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(76, 25);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Linear:";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.BassNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "BassFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.BassNumericUpDown.DecimalPlaces = 2;
+            this.BassNumericUpDown.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BassNumericUpDown.Location = new System.Drawing.Point(51, 3);
+            this.BassNumericUpDown.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.BassNumericUpDown.Name = "BassNumericUpDown";
+            this.BassNumericUpDown.Size = new System.Drawing.Size(42, 20);
+            this.BassNumericUpDown.TabIndex = 4;
+            this.BassNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.BassFactor;
             // 
             // label6
             // 
@@ -583,106 +681,17 @@
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label6.Location = new System.Drawing.Point(3, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(76, 25);
+            this.label6.Size = new System.Drawing.Size(42, 25);
             this.label6.TabIndex = 0;
             this.label6.Text = "Linear:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // TrebleSqrtNumericUpDown
+            // exponentialToolStripMenuItem
             // 
-            this.TrebleSqrtNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "TrebleSqrtFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.TrebleSqrtNumericUpDown.DecimalPlaces = 2;
-            this.TrebleSqrtNumericUpDown.Location = new System.Drawing.Point(85, 3);
-            this.TrebleSqrtNumericUpDown.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.TrebleSqrtNumericUpDown.Name = "TrebleSqrtNumericUpDown";
-            this.TrebleSqrtNumericUpDown.Size = new System.Drawing.Size(77, 20);
-            this.TrebleSqrtNumericUpDown.TabIndex = 1;
-            this.TrebleSqrtNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.TrebleSqrtFactor;
-            this.TrebleSqrtNumericUpDown.ValueChanged += new System.EventHandler(this.TrebleSqrtNumericUpDown_ValueChanged);
-            // 
-            // TrebleNumericUpDown
-            // 
-            this.TrebleNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "TrebleFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.TrebleNumericUpDown.DecimalPlaces = 2;
-            this.TrebleNumericUpDown.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TrebleNumericUpDown.Location = new System.Drawing.Point(85, 3);
-            this.TrebleNumericUpDown.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.TrebleNumericUpDown.Name = "TrebleNumericUpDown";
-            this.TrebleNumericUpDown.Size = new System.Drawing.Size(77, 20);
-            this.TrebleNumericUpDown.TabIndex = 5;
-            this.TrebleNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.TrebleFactor;
-            // 
-            // MedioSqrtNumericUpDown
-            // 
-            this.MedioSqrtNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "MedioSqrtFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.MedioSqrtNumericUpDown.DecimalPlaces = 2;
-            this.MedioSqrtNumericUpDown.Location = new System.Drawing.Point(85, 3);
-            this.MedioSqrtNumericUpDown.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.MedioSqrtNumericUpDown.Name = "MedioSqrtNumericUpDown";
-            this.MedioSqrtNumericUpDown.Size = new System.Drawing.Size(77, 20);
-            this.MedioSqrtNumericUpDown.TabIndex = 1;
-            this.MedioSqrtNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.MedioSqrtFactor;
-            this.MedioSqrtNumericUpDown.ValueChanged += new System.EventHandler(this.MedioSqrtNumericUpDown_ValueChanged);
-            // 
-            // MedioNumericUpDown
-            // 
-            this.MedioNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "MediumFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.MedioNumericUpDown.DecimalPlaces = 2;
-            this.MedioNumericUpDown.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MedioNumericUpDown.Location = new System.Drawing.Point(85, 3);
-            this.MedioNumericUpDown.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.MedioNumericUpDown.Name = "MedioNumericUpDown";
-            this.MedioNumericUpDown.Size = new System.Drawing.Size(77, 20);
-            this.MedioNumericUpDown.TabIndex = 4;
-            this.MedioNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.MediumFactor;
-            // 
-            // BassSqrtNumericUpDown
-            // 
-            this.BassSqrtNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "BassSqrtFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.BassSqrtNumericUpDown.DecimalPlaces = 2;
-            this.BassSqrtNumericUpDown.Location = new System.Drawing.Point(85, 3);
-            this.BassSqrtNumericUpDown.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.BassSqrtNumericUpDown.Name = "BassSqrtNumericUpDown";
-            this.BassSqrtNumericUpDown.Size = new System.Drawing.Size(77, 20);
-            this.BassSqrtNumericUpDown.TabIndex = 1;
-            this.BassSqrtNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.BassSqrtFactor;
-            this.BassSqrtNumericUpDown.ValueChanged += new System.EventHandler(this.BassSqrtNumericUpDown_ValueChanged);
-            // 
-            // BassNumericUpDown
-            // 
-            this.BassNumericUpDown.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::LedsGUI.Properties.Settings.Default, "BassFactor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.BassNumericUpDown.DecimalPlaces = 2;
-            this.BassNumericUpDown.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.BassNumericUpDown.Location = new System.Drawing.Point(85, 3);
-            this.BassNumericUpDown.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.BassNumericUpDown.Name = "BassNumericUpDown";
-            this.BassNumericUpDown.Size = new System.Drawing.Size(77, 20);
-            this.BassNumericUpDown.TabIndex = 4;
-            this.BassNumericUpDown.Value = global::LedsGUI.Properties.Settings.Default.BassFactor;
+            this.exponentialToolStripMenuItem.Name = "exponentialToolStripMenuItem";
+            this.exponentialToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exponentialToolStripMenuItem.Text = "Exponential";
+            this.exponentialToolStripMenuItem.Click += new System.EventHandler(this.exponentialToolStripMenuItem_Click);
             // 
             // DigitalMusicalMode
             // 
@@ -691,7 +700,7 @@
             this.ClientSize = new System.Drawing.Size(448, 500);
             this.Controls.Add(this.splitContainer1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(464, 0);
+            this.MinimumSize = new System.Drawing.Size(464, 39);
             this.Name = "DigitalMusicalMode";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Digital Musical Mode Visualization";
@@ -711,35 +720,35 @@
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.TreblePictureBox)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrebleSqrtNumericUpDown)).EndInit();
+            this.tableLayoutPanel8.ResumeLayout(false);
+            this.tableLayoutPanel8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrebleNumericUpDown)).EndInit();
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MedioPictureBox)).EndInit();
             this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel6.ResumeLayout(false);
+            this.tableLayoutPanel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MedioSqrtNumericUpDown)).EndInit();
+            this.tableLayoutPanel9.ResumeLayout(false);
+            this.tableLayoutPanel9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MedioNumericUpDown)).EndInit();
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.BassPictureBox)).EndInit();
             this.tableLayoutPanel4.ResumeLayout(false);
-            this.tableLayoutPanel5.ResumeLayout(false);
-            this.tableLayoutPanel5.PerformLayout();
-            this.tableLayoutPanel6.ResumeLayout(false);
-            this.tableLayoutPanel6.PerformLayout();
             this.tableLayoutPanel7.ResumeLayout(false);
             this.tableLayoutPanel7.PerformLayout();
-            this.tableLayoutPanel8.ResumeLayout(false);
-            this.tableLayoutPanel8.PerformLayout();
-            this.tableLayoutPanel9.ResumeLayout(false);
-            this.tableLayoutPanel9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BassSqrtNumericUpDown)).EndInit();
             this.tableLayoutPanel10.ResumeLayout(false);
             this.tableLayoutPanel10.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TrebleSqrtNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TrebleNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MedioSqrtNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MedioNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.BassSqrtNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BassNumericUpDown)).EndInit();
             this.ResumeLayout(false);
 
@@ -792,5 +801,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel10;
         private System.Windows.Forms.NumericUpDown BassNumericUpDown;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ToolStripMenuItem exponentialToolStripMenuItem;
     }
 }

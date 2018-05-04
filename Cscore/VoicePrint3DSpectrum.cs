@@ -118,13 +118,13 @@ namespace LedsGUI.Cscore
                                 FirmataModule.SoundSpectrumColor = pen.Color;
                                 break;
                             case DrawPurpose.ForDigitalBass:
-                                FirmataModule.DigitalSpectrumPattern[0] = pen.Color;
+                                FirmataModule.DigitalSpectrumColor = Color.FromArgb(pen.Color.R, FirmataModule.DigitalSpectrumColor.G, FirmataModule.DigitalSpectrumColor.B);
                                 break;
                             case DrawPurpose.ForDigitalMedio:
-                                FirmataModule.DigitalSpectrumPattern[1] = pen.Color;
+                                FirmataModule.DigitalSpectrumColor = Color.FromArgb(FirmataModule.DigitalSpectrumColor.R, pen.Color.G, FirmataModule.DigitalSpectrumColor.B);
                                 break;
                             case DrawPurpose.ForDigitalTreble:
-                                FirmataModule.DigitalSpectrumPattern[2] = pen.Color;
+                                FirmataModule.DigitalSpectrumColor = Color.FromArgb(FirmataModule.DigitalSpectrumColor.R, FirmataModule.DigitalSpectrumColor.G, pen.Color.B);
                                 break;
                             case DrawPurpose.ForGeneric:
                                 break;

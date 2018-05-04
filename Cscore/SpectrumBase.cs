@@ -179,6 +179,10 @@ namespace WinformsVisualization.Visualization
                     case ScalingStrategy.Sqrt:
                         value0 = ((Math.Sqrt(fftBuffer[i])) * Convert.ToDouble(scaleFactorSqrt)) * actualMaxValue;
                         break;
+                    case ScalingStrategy.Exponential:
+                        //for While it is the same shit as SQRT
+                        value0 = ((Math.Sqrt(fftBuffer[i])) * Convert.ToDouble(scaleFactorSqrt)) * actualMaxValue;
+                        break;
                 }
 
                 bool recalc = true;
@@ -226,5 +230,8 @@ namespace WinformsVisualization.Visualization
             public int SpectrumPointIndex;
             public double Value;
         }
+
+
     }
+
 }

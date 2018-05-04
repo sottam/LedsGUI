@@ -796,7 +796,7 @@ namespace LedsGUI
         private System.Windows.Forms.ToolStripStatusLabel ComPortStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel MessageStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel MusicalRealSamplingToolStripStatusLabel;
-        private static BackgroundWorker TempWorker;
+        public static BackgroundWorker TempWorker;
     }
 }
 
