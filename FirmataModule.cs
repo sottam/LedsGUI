@@ -119,7 +119,7 @@ namespace LedsGUI
                 arduino.Dispose();
                 }
 
-                connection = new EnhancedSerialConnection(porta, SerialBaudRate.Bps_9600);
+                connection = new EnhancedSerialConnection(porta, SerialBaudRate.Bps_2400);
                 arduino = new ArduinoSession(connection);
 
                 _COMStatusLabel.Text = porta;

@@ -21,10 +21,10 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf64}\{#MyAppName}
 DisableProgramGroupPage=yes
-OutputDir=D:\VSProjects\LedsGUI\Installer
+OutputDir={#SourcePath}\Installer
 OutputBaseFilename=LEDsGUI-setup-x64
-SetupIconFile=D:\VSProjects\LedsGUI\FitaLedController.ico
-UninstallDisplayIcon=D:\VSProjects\LedsGUI\FitaLedController.ico
+SetupIconFile={#SourcePath}\FitaLedController.ico
+UninstallDisplayIcon={#SourcePath}\FitaLedController.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -35,11 +35,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}";
 
 [Files]
-Source: "D:\VSProjects\LedsGUI\bin\Release x64\LedsGUI.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\VSProjects\LedsGUI\bin\Release x64\CSCore.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\VSProjects\LedsGUI\bin\Release x64\LedsGUI.application"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\VSProjects\LedsGUI\bin\Release x64\sketch.ino"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\VSProjects\LedsGUI\bin\Release x64\Solid.Arduino.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: {#SourcePath}\bin\Release x64\LedsGUI.exe; DestDir: "{app}"; Flags: ignoreversion
+Source: {#SourcePath}\bin\Release x64\CSCore.dll; DestDir: "{app}"; Flags: ignoreversion
+Source: {#SourcePath}\bin\Release x64\LedsGUI.application; DestDir: "{app}"; Flags: ignoreversion
+Source: {#SourcePath}\bin\Release x64\sketch.ino; DestDir: "{app}"; Flags: ignoreversion
+Source: {#SourcePath}\bin\Release x64\Solid.Arduino.dll; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

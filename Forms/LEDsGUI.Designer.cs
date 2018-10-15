@@ -209,7 +209,7 @@ namespace LedsGUI
             // 
             // SoundSpectrumTimer
             // 
-            this.SoundSpectrumTimer.Interval = 17;
+            this.SoundSpectrumTimer.Interval = 40;
             this.SoundSpectrumTimer.Tick += new System.EventHandler(this.SoundSpectrum_Tick);
             // 
             // splitContainer2
