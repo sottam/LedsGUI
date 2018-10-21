@@ -4,66 +4,34 @@
  Author:	Alonso
 */
 
-#if defined(FASTLED_VERSION) && (FASTLED_VERSION < 3001000)
-#warning "Requires FastLED 3.1 or later; check github for latest code."
-#endif
-
-#include <power_mgt.h>
-#include <platforms.h>
-#include <pixeltypes.h>
-#include <pixelset.h>
-#include <noise.h>
-#include <lib8tion.h>
-#include <led_sysdefs.h>
-#include <hsv2rgb.h>
-#include <fastspi_types.h>
-#include <fastspi_ref.h>
-#include <fastspi_nop.h>
-#include <fastspi_dma.h>
-#include <fastspi_bitbang.h>
-#include <fastspi.h>
-#include <fastpin.h>
-#include <fastled_progmem.h>
-#include <fastled_delay.h>
-#include <fastled_config.h>
-#include <dmx.h>
-#include <cpp_compat.h>
-#include <controller.h>
-#include <colorutils.h>
-#include <colorpalettes.h>
-#include <color.h>
-#include <chipsets.h>
-#include <bitswap.h>
 #include "Arduino.h"
-#include <ConfigurableFirmata.h>
-#include <DigitalOutputFirmata.h>
-#include <AnalogOutputFirmata.h>
-#include <FirmataExt.h>
-#include <AnalogWrite.h>
+#include "StripModes.cpp"
 #include <FastLED.h>
-#include <Thread.h>
-#include <StaticThreadController.h>
-#include <FirmataFeature.h>
 
-//---------------------------------------------------------------------
+//======================= DEFINES =============================
 
 //DIGITAL STRIP
 #define DATA_PIN    13
 #define LED_TYPE    WS2813
 #define COLOR_ORDER GRB
 #define NUM_LEDS    300
-
 #define BRIGHTNESS  255
 
 //ANALOG STRIP
 // #define COMMOM_ANODE
-
-#define RED_PIN   9
-#define GREEN_PIN 10
-#define BLUE_PIN  11
-
+#define RED_PIN   5
+#define GREEN_PIN 18
+#define BLUE_PIN  19
 
 //----------------------------------------------------------------------
+#define ACK									(0x06)
+#define NAK									(0x15)
+
+#define HANDSHAKE							(0xF1)
+#define HANDSHAKE_ANSWER					(0xF2)
+
+#define MESSAGE_START						(0xF0)
+
 #define STRIP_DATA							(0x0F)
 
 #define	DIGITAL_CHANGEMODE 					(0x01)
@@ -80,266 +48,86 @@
 #define ANALOG_CHANGECOLOR					(0x0B)
 #define ANALOG_MUSICAL_PATTERN				(0x0C)
 
-class LedStripUserSysexManager : public FirmataFeature {
-public:
-	//LedStripUserSysexManager();
-	//virtual ~LedStripUserSysexManager();
+#define MESSAGE_END							(0xF7)
+//================================================================
 
-	// FirmataFeature implementation
-	/*boolean handlePinMode(byte pin, int mode);
-	void handleCapability(byte pin);
-	boolean handleSysex(byte command, byte argc, byte *argv);
-	void reset();
-	void SetupMusicalPalette();
-	void SetupBreathingPalette();*/
+//====================== VARIABLES ============================
 
-	//digitalLedImplementation
-	byte digitalStripMode = 0;
-	byte digitalInterval = 30;//ms
-	byte digitalBrightness = 255; //max
+byte digitalStaticColorRed = 255;
+byte digitalStaticColorGreen = 255;
+byte digitalStaticColorBlue = 255;
 
-	//analogLedImplementation
-	byte analogStripMode = 0;
-	byte analogInterval = 10;//ms
-	byte analogBrightness = 255;//max
+byte analogStaticColorRed = 255;
+byte analogStaticColorGreen = 255;
+byte analogStaticColorBlue = 255;
 
-	//controles
-	bool digitalIntervalHasChanged = false;
-	bool digitalBrightHasChanged = false;
+CRGBPalette256 musicalPalette;
+CRGB BassIntensity;
+CRGB MedioIntensity;
+CRGB TrebleIntensity;
 
-	bool analogIntervalHasChanged = false;
-	bool analogBrightHasChanged = false;
+CRGB MusicalOutput;
+byte b0 = 0;
+byte b1 = 0;
+byte b2 = 0;
 
-	byte digitalStaticColorRed = 255;
-	byte digitalStaticColorGreen = 255;
-	byte digitalStaticColorBlue = 255;
+CRGBPalette256 breathingPalette = CRGBPalette256(CRGB::Red, CRGB::Black, CRGB::Black, CRGB::Red,
+	CRGB::Red, CRGB::Black, CRGB::Black, CRGB::Red,
+	CRGB::Red, CRGB::Black, CRGB::Black, CRGB::Red,
+	CRGB::Red, CRGB::Black, CRGB::Black, CRGB::Red);
 
-	byte analogStaticColorRed = 255;
-	byte analogStaticColorGreen = 255;
-	byte analogStaticColorBlue = 255;
+CRGB analogPalette = CRGB(0, 0, 0);;
 
-	CRGBPalette256 musicalPalette;
-	CRGB BassIntensity;
-	CRGB MedioIntensity;
-	CRGB TrebleIntensity;
-
-	CRGB MusicalOutput;
-	byte b0 = 0;
-	byte b1 = 0;
-	byte b2 = 0;
-
-	CRGBPalette256 breathingPalette = CRGBPalette256(	CRGB::Red, CRGB::Black, CRGB::Black, CRGB::Red,
-														CRGB::Red, CRGB::Black, CRGB::Black, CRGB::Red,
-														CRGB::Red, CRGB::Black, CRGB::Black, CRGB::Red,
-														CRGB::Red, CRGB::Black, CRGB::Black, CRGB::Red);
-
-	CRGB analogPalette = CRGB(0, 0, 0);;
-
-	CRGB CustomColors[16];
-	byte SelectedCustomPalette;
-	CRGBPalette16 CustomPalette16;
-	CRGBPalette32 CustomPalette32;
-	CRGBPalette256 CustomPalette256;
-	TBlendType customBlend;
-	bool animated = false;
-	byte increment = 3;
-
-	LedStripUserSysexManager()
-	{
-		musicalPalette = RainbowColors_p;
-	}
-
-	boolean handleSysex(byte command, byte argc, byte* argv) {
-
-		if (command == STRIP_DATA)
-		{
-			byte subCommand = argv[0];
-			byte ColorNum;
-
-			switch (subCommand) {
-			case DIGITAL_CHANGEMODE:
-				if (argc != 2) return false;
-				digitalStripMode = argv[1];
-				break;
-
-			case DIGITAL_CHANGEINTERVAL:
-				if (argc != 2) return false;
-				digitalInterval = argv[1];
-				digitalIntervalHasChanged = true;
-				break;
-
-			case DIGITAL_CHANGEBRIGHT:
-				if (argc != 3) return false;
-				digitalBrightness = argv[1] | (argv[2] << 7);
-				digitalBrightHasChanged = true;
-				break;
-
-			case DIGITAL_CHANGECOLOR:
-				if (argc != 7) return false;
-				digitalStaticColorRed = argv[1] | (argv[2] << 7);
-				digitalStaticColorGreen = argv[3] | (argv[4] << 7);
-				digitalStaticColorBlue = argv[5] | (argv[6] << 7);
-				SetupBreathingPalette();
-				break;
-
-			case DIGITAL_MUSICAL_PATTERN:
-				if (argc != 7) return false;
-				BassIntensity = CRGB(argv[1] | argv[2] << 7, 0, 0);
-				MedioIntensity = CRGB(0, argv[3] | argv[4] << 7, 0);
-				TrebleIntensity = CRGB(0, 0, argv[5] | argv[6] << 7);
-				b0 = argv[1] | argv[2] << 7;
-				b1 = argv[3] | argv[4] << 7;
-				b2 = argv[5] | argv[6] << 7;
-				SetupMusicalPalette();
-				//if (argc != 13) return;
-				//BassIntensity = CRGB(argv[1] | argv[2] << 7, argv[3] | argv[4] << 7, argv[5] | argv[6] << 7);
-				//MedioIntensity = CRGB(argv[7] | argv[8] << 7, argv[9] | argv[10] << 7, argv[11] | argv[12] << 7);
-				//SetupMusicalPalette();
-				break;
-
-			case DIGITAL_CUSTOM_PALETTE:
-				ColorNum = argv[1];
-				CustomColors[ColorNum] = CRGB(argv[2] | argv[3] << 7, argv[4] | argv[5] << 7, argv[6] | argv[7] << 7);
-				break;
-
-			case DIGITAL_CUSTOM_PALETTE_PROPERTIES:
-				if (argv[1] == 0x01)
-					customBlend = TBlendType::LINEARBLEND;
-				else
-					customBlend = TBlendType::NOBLEND;
-
-				if (argv[2] == 0x01)
-					animated = true;
-				else
-					animated = false;
-
-				increment = argv[3];
-
-				switch (argv[4])
-				{
-				case 0:
-					SelectedCustomPalette = 0;
-					CustomPalette16 = CRGBPalette16(CustomColors[0], CustomColors[1], CustomColors[2], CustomColors[3],
-						CustomColors[4], CustomColors[5], CustomColors[6], CustomColors[7],
-						CustomColors[8], CustomColors[9], CustomColors[10], CustomColors[11],
-						CustomColors[12], CustomColors[13], CustomColors[14], CustomColors[15]);
-					break;
-				case 1:
-					SelectedCustomPalette = 1;
-					CustomPalette32 = CRGBPalette32(CustomColors[0], CustomColors[1], CustomColors[2], CustomColors[3],
-						CustomColors[4], CustomColors[5], CustomColors[6], CustomColors[7],
-						CustomColors[8], CustomColors[9], CustomColors[10], CustomColors[11],
-						CustomColors[12], CustomColors[13], CustomColors[14], CustomColors[15]);
-					break;
-				case 2:
-					SelectedCustomPalette = 2;
-					CustomPalette256 = CRGBPalette256(CustomColors[0], CustomColors[1], CustomColors[2], CustomColors[3],
-						CustomColors[4], CustomColors[5], CustomColors[6], CustomColors[7],
-						CustomColors[8], CustomColors[9], CustomColors[10], CustomColors[11],
-						CustomColors[12], CustomColors[13], CustomColors[14], CustomColors[15]);
-					break;
-				default:
-					break;
-				}
-
-				break;
+CRGB CustomColors[16];
+byte SelectedCustomPalette;
+CRGBPalette16 CustomPalette16;
+CRGBPalette32 CustomPalette32;
+CRGBPalette256 CustomPalette256;
+TBlendType customBlend;
+bool animated = false;
+byte increment = 3;
 
 
-			case ANALOG_CHANGEMODE:
-				if (argc != 2) return false;
-				analogStripMode = argv[1];
-				break;
+// Useful Color Arrays ----------------------------------------------------------------
+const byte lights[360] = { 0,   0,   0,   0,   0,   1,   1,   2,   2,   3,   4,   5,   6,   7,   8,   9,
+11,  12,  13,  15,  17,  18,  20,  22,  24,  26,  28,  30,  32,  35,  37,  39,
+42,  44,  47,  49,  52,  55,  58,  60,  63,  66,  69,  72,  75,  78,  81,  85,
+88,  91,  94,  97, 101, 104, 107, 111, 114, 117, 121, 124, 127, 131, 134, 137,
+141, 144, 147, 150, 154, 157, 160, 163, 167, 170, 173, 176, 179, 182, 185, 188,
+191, 194, 197, 200, 202, 205, 208, 210, 213, 215, 217, 220, 222, 224, 226, 229,
+231, 232, 234, 236, 238, 239, 241, 242, 244, 245, 246, 248, 249, 250, 251, 251,
+252, 253, 253, 254, 254, 255, 255, 255, 255, 255, 255, 255, 254, 254, 253, 253,
+252, 251, 251, 250, 249, 248, 246, 245, 244, 242, 241, 239, 238, 236, 234, 232,
+231, 229, 226, 224, 222, 220, 217, 215, 213, 210, 208, 205, 202, 200, 197, 194,
+191, 188, 185, 182, 179, 176, 173, 170, 167, 163, 160, 157, 154, 150, 147, 144,
+141, 137, 134, 131, 127, 124, 121, 117, 114, 111, 107, 104, 101,  97,  94,  91,
+88,  85,  81,  78,  75,  72,  69,  66,  63,  60,  58,  55,  52,  49,  47,  44,
+42,  39,  37,  35,  32,  30,  28,  26,  24,  22,  20,  18,  17,  15,  13,  12,
+11,   9,   8,   7,   6,   5,   4,   3,   2,   2,   1,   1,   0,   0,   0,   0,
+0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+0,   0,   0,   0,   0,   0,   0,   0 };
 
-			case ANALOG_CHANGEINTERVAL:
-				if (argc != 2) return false;
-				analogInterval = argv[1];
-				analogIntervalHasChanged = true;
-				break;
+const byte HSVlights[61] = { 0,   4,   8,  13,  17,  21,  25,  30,  34,  38,  42,  47,  51,  55,  59,  64,
+68,  72,  76,  81,  85,  89,  93,  98, 102, 106, 110, 115, 119, 123, 127, 132,
+136, 140, 144, 149, 153, 157, 161, 166, 170, 174, 178, 183, 187, 191, 195, 200,
+204, 208, 212, 217, 221, 225, 229, 234, 238, 242, 246, 251, 255 };
 
-			case ANALOG_CHANGEBRIGHT:
-				if (argc != 3) return false;
-				analogBrightness = argv[1] | (argv[2] << 7);
-				analogBrightHasChanged = true;
-				break;
+const byte HSVpower[121] = { 0,   2,   4,   6,   8,  11,  13,  15,  17,  19,  21,  23,  25,  28,  30,  32,
+34,  36,  38,  40,  42,  45,  47,  49,  51,  53,  55,  57,  59,  62,  64,  66,
+68,  70,  72,  74,  76,  79,  81,  83,  85,  87,  89,  91,  93,  96,  98, 100,
+102, 104, 106, 108, 110, 113, 115, 117, 119, 121, 123, 125, 127, 130, 132, 134,
+136, 138, 140, 142, 144, 147, 149, 151, 153, 155, 157, 159, 161, 164, 166, 168,
+170, 172, 174, 176, 178, 181, 183, 185, 187, 189, 191, 193, 195, 198, 200, 202,
+204, 206, 208, 210, 212, 215, 217, 219, 221, 223, 225, 227, 229, 232, 234, 236,
+238, 240, 242, 244, 246, 249, 251, 253, 255 };
 
-			case ANALOG_CHANGECOLOR:
-				if (argc != 7) return false;
-				analogStaticColorRed = argv[1] | (argv[2] << 7);
-				analogStaticColorGreen = argv[3] | (argv[4] << 7);
-				analogStaticColorBlue = argv[5] | (argv[6] << 7);
-				break;
-
-			case ANALOG_MUSICAL_PATTERN:
-				if (argc != 7) return false;
-				analogPalette = CRGB(argv[1] | argv[2] << 7, argv[3] | argv[4] << 7, argv[5] | argv[6] << 7);
-				break;
-
-			default:
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	boolean handlePinMode(byte pin, int mode)
-	{
-		return true;
-	}
-
-	void handleCapability(byte pin)
-	{
-	}
-
-	void reset()
-	{
-	}
-
-	byte MusMap(byte value, byte max) 
-	{
-		return map(value, 0, 255, 0, max);
-	}
-
-	void SetupMusicalPalette()
-	{
-		/*
-		musicalPalette = CRGBPalette256(
-			BassIntensity,
-			CRGB(MusMap(BassIntensity.r, 0xD5), MusMap(MedioIntensity.g, 0x2A), 0),
-			CRGB(MusMap(BassIntensity.r, 0xAB), MusMap(MedioIntensity.g, 0x55), 0),
-			CRGB(MusMap(BassIntensity.r, 0xAB), MusMap(MedioIntensity.g, 0x7F), 0),
-			CRGB(MusMap(BassIntensity.r, 0xAB), MusMap(MedioIntensity.g, 0xAB), 0),
-			CRGB(MusMap(BassIntensity.r, 0x56), MusMap(MedioIntensity.g, 0xD5), 0),
-			MedioIntensity,
-			CRGB(0, MusMap(MedioIntensity.g, 0xD5), MusMap(TrebleIntensity.b, 0x2A)),
-			CRGB(0, MusMap(MedioIntensity.g, 0xAB), MusMap(TrebleIntensity.b, 0x55)),
-			CRGB(0, MusMap(MedioIntensity.g, 0x56), MusMap(TrebleIntensity.b, 0xAA)),
-			TrebleIntensity.b,
-			CRGB(MusMap(BassIntensity.r, 0x2A), 0, MusMap(TrebleIntensity.b, 0xD5)),
-			CRGB(MusMap(BassIntensity.r, 0x55), 0, MusMap(TrebleIntensity.b, 0xAB)),
-			CRGB(MusMap(BassIntensity.r, 0x7F), 0, MusMap(TrebleIntensity.b, 0x81)),
-			CRGB(MusMap(BassIntensity.r, 0xAB), 0, MusMap(TrebleIntensity.b, 0x55)),
-			CRGB(MusMap(BassIntensity.r, 0xD5), 0, MusMap(TrebleIntensity.b, 0x2B))
-		);*/
-	}
-
-	void SetupBreathingPalette()
-	{
-		CRGB CustomColor = CRGB(digitalStaticColorRed, digitalStaticColorGreen, digitalStaticColorBlue);
-
-		breathingPalette = CRGBPalette256(	CRGB::Black, CRGB::Black, CRGB::Black, CRGB::Black,
-											CustomColor, CustomColor, CustomColor, CustomColor,
-											CustomColor, CustomColor, CustomColor, CustomColor,
-											CRGB::Black, CRGB::Black, CRGB::Black, CRGB::Black);
-	}
-
-	};
-
-
-DigitalOutputFirmata digitalOutput;
-AnalogOutputFirmata analogOutput;
-FirmataExt firmataExt;
-LedStripUserSysexManager sysexManager;
+//==============================================================
 
 //VariableEffects
 
@@ -375,53 +163,42 @@ byte analogPercent = 50;
 int analogPercentAux = 1;
 byte random_count = 0; //analog random mode
 
-//"Threads"
-Thread DigitalStrip = Thread();
-Thread AnalogStrip = Thread();
-StaticThreadController<2> Manager(&DigitalStrip, &AnalogStrip);
+byte analogMusicalRed = 0;
+byte analogMusicalGreen = 0;
+byte analogMusicalBlue = 0;
 
-// Useful Color Arrays ----------------------------------------------------------------
-const byte lights[360] = {		0,   0,   0,   0,   0,   1,   1,   2,   2,   3,   4,   5,   6,   7,   8,   9,
-							   11,  12,  13,  15,  17,  18,  20,  22,  24,  26,  28,  30,  32,  35,  37,  39,
-							   42,  44,  47,  49,  52,  55,  58,  60,  63,  66,  69,  72,  75,  78,  81,  85,
-							   88,  91,  94,  97, 101, 104, 107, 111, 114, 117, 121, 124, 127, 131, 134, 137,
-							  141, 144, 147, 150, 154, 157, 160, 163, 167, 170, 173, 176, 179, 182, 185, 188,
-							  191, 194, 197, 200, 202, 205, 208, 210, 213, 215, 217, 220, 222, 224, 226, 229,
-							  231, 232, 234, 236, 238, 239, 241, 242, 244, 245, 246, 248, 249, 250, 251, 251,
-							  252, 253, 253, 254, 254, 255, 255, 255, 255, 255, 255, 255, 254, 254, 253, 253,
-							  252, 251, 251, 250, 249, 248, 246, 245, 244, 242, 241, 239, 238, 236, 234, 232,
-							  231, 229, 226, 224, 222, 220, 217, 215, 213, 210, 208, 205, 202, 200, 197, 194,
-							  191, 188, 185, 182, 179, 176, 173, 170, 167, 163, 160, 157, 154, 150, 147, 144,
-							  141, 137, 134, 131, 127, 124, 121, 117, 114, 111, 107, 104, 101,  97,  94,  91,
-							   88,  85,  81,  78,  75,  72,  69,  66,  63,  60,  58,  55,  52,  49,  47,  44,
-							   42,  39,  37,  35,  32,  30,  28,  26,  24,  22,  20,  18,  17,  15,  13,  12,
-							   11,   9,   8,   7,   6,   5,   4,   3,   2,   2,   1,   1,   0,   0,   0,   0,
-							    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-							    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-							    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-							    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-							    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-							    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-							    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-							    0,   0,   0,   0,   0,   0,   0,   0 };
+//---------------------------------------------------------------------
 
-const byte HSVlights[61] = {  0,   4,   8,  13,  17,  21,  25,  30,  34,  38,  42,  47,  51,  55,  59,  64,
-							 68,  72,  76,  81,  85,  89,  93,  98, 102, 106, 110, 115, 119, 123, 127, 132,
-							136, 140, 144, 149, 153, 157, 161, 166, 170, 174, 178, 183, 187, 191, 195, 200,
-							204, 208, 212, 217, 221, 225, 229, 234, 238, 242, 246, 251, 255 };
 
-const byte HSVpower[121] = {  0,   2,   4,   6,   8,  11,  13,  15,  17,  19,  21,  23,  25,  28,  30,  32,
-							 34,  36,  38,  40,  42,  45,  47,  49,  51,  53,  55,  57,  59,  62,  64,  66,
-							 68,  70,  72,  74,  76,  79,  81,  83,  85,  87,  89,  91,  93,  96,  98, 100,
-							102, 104, 106, 108, 110, 113, 115, 117, 119, 121, 123, 125, 127, 130, 132, 134,
-							136, 138, 140, 142, 144, 147, 149, 151, 153, 155, 157, 159, 161, 164, 166, 168,
-							170, 172, 174, 176, 178, 181, 183, 185, 187, 189, 191, 193, 195, 198, 200, 202,
-							204, 206, 208, 210, 212, 215, 217, 219, 221, 223, 225, 227, 229, 232, 234, 236,
-							238, 240, 242, 244, 246, 249, 251, 253, 255 };
+//digitalLedImplementation
+byte digitalStripMode = 14;
+byte digitalInterval = 5;//ms
+byte digitalBrightness = 255; //max
 
-//PresetedEffects
+//analogLedImplementation
+byte analogStripMode = 0;
+byte analogInterval = 10;//ms
+byte analogBrightness = 255;//max
+
+//=============================================================
+
+byte MusMap(byte value, byte max)
+{
+	return map(value, 0, 255, 0, max);
+}
+
+void SetupBreathingPalette()
+{
+	CRGB CustomColor = CRGB(digitalStaticColorRed, digitalStaticColorGreen, digitalStaticColorBlue);
+
+	breathingPalette = CRGBPalette256(CRGB::Black, CRGB::Black, CRGB::Black, CRGB::Black,
+		CustomColor, CustomColor, CustomColor, CustomColor,
+		CustomColor, CustomColor, CustomColor, CustomColor,
+		CRGB::Black, CRGB::Black, CRGB::Black, CRGB::Black);
+}
+
+//======================== PresetedEffects =====================
 void RainbowSnake();
-//void nextPattern();
 void RealHSVRainbow_digital();
 void PowerHSVRainbow_digital();
 void SineWaveRainbow_digital();
@@ -448,7 +225,12 @@ void Musical_analog(); //do nothing, only listens to client application
 void random_color_analog();
 void Deactivated_analog();
 
-typedef void(*SimplePatternList[])();
+//========================= Threads ====================================
+
+TaskHandle_t Task1, Task2;
+//SemaphoreHandle_t mutexDig,mutexAng;
+
+ typedef void(*SimplePatternList[])();
 //NEVER CHANGE ORDER. ONLY ADD BY THE END. HARDCODED ARRAY.
 SimplePatternList digitalPatterns = {	RainbowSnake,					//0
 										RealHSVRainbow_digital,			//1
@@ -482,114 +264,249 @@ SimplePatternList analogPatterns = {	RealHSVRainbow_analog,
 										};
 int analogPatternsSize = 8;
 //ThreadsFunction
-void DigitalLoop() 
+void DigitalLoop(void * parameter)
 {
-	digitalPatterns[sysexManager.digitalStripMode % digitalPatternsSize]();
+	//Serial.print(xPortGetCoreID());
+	for (;;) {
+		digitalPatterns[digitalStripMode % digitalPatternsSize]();
+		if (digitalStripMode != 6)
+			delay(digitalInterval);
+		else
+			delay(10);
+	}
 }
 
-void AnalogLoop() 
+void AnalogLoop(void * parameter)
 {
-	analogPatterns[sysexManager.analogStripMode % analogPatternsSize]();
+	//Serial.print(xPortGetCoreID());
+	for (;;) {
+		analogPatterns[analogStripMode % analogPatternsSize]();
+		if (analogStripMode != 5)
+			delay(analogInterval);
+		else
+			delay(10);
+	}
 }
+
+int freq = 500;
+int resolution = 8;
+
+//========================= ARDUINO FUNCTIONS ========================
+
+void setup() 
+{
+	Serial.begin(921600);
+
+	ledcSetup(1, freq, resolution);
+	ledcSetup(2, freq, resolution);
+	ledcSetup(3, freq, resolution);
+	ledcAttachPin(RED_PIN, 1);
+	ledcAttachPin(GREEN_PIN, 2);
+	ledcAttachPin(BLUE_PIN, 3);
+
+	pinMode(2, OUTPUT);
+
+	musicalPalette = RainbowColors_p;
+
+	FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+
+	xTaskCreatePinnedToCore(
+		DigitalLoop,
+		"DigitalStripTask",
+		1000,
+		NULL,
+		1,
+		&Task1,
+		0);
+
+	delay(500);  // needed to start-up task1
+
+	xTaskCreatePinnedToCore(
+		AnalogLoop,
+		"AnalogStripTask",
+		1000,
+		NULL,
+		1,
+		&Task2,
+		0);
+}
+
+// here to process incoming serial data after a terminator received
+void process_data(const byte * buffer)
+{
+	byte command = buffer[1];
+
+	if (command == STRIP_DATA)
+	{
+		byte subCommand = buffer[2];
+		byte ColorNum;
+
+		switch (subCommand) {
+			case DIGITAL_CHANGEMODE:
+				digitalStripMode = buffer[3];
+				Serial.write(ACK);
+				break;
+
+			case DIGITAL_CHANGEINTERVAL:
+				digitalInterval = buffer[3];
+				Serial.write(ACK);
+				break;
+
+			case DIGITAL_CHANGEBRIGHT:
+				digitalBrightness = buffer[3] | (buffer[4] << 7);
+				FastLED.setBrightness(digitalBrightness);
+				Serial.write(ACK);
+				break;
+
+			case DIGITAL_CHANGECOLOR:
+				digitalStaticColorRed = buffer[3] | (buffer[4] << 7);
+				digitalStaticColorGreen = buffer[5] | (buffer[6] << 7);
+				digitalStaticColorBlue = buffer[7] | (buffer[8] << 7);
+				SetupBreathingPalette();
+				Serial.write(ACK);
+				break;
+
+			case DIGITAL_MUSICAL_PATTERN:
+				BassIntensity = CRGB(buffer[3] | buffer[4] << 7, 0, 0);
+				MedioIntensity = CRGB(0, buffer[5] | buffer[6] << 7, 0);
+				TrebleIntensity = CRGB(0, 0, buffer[7] | buffer[8] << 7);
+				Serial.write(ACK);
+				break;
+
+			case DIGITAL_CUSTOM_PALETTE:
+				ColorNum = buffer[3];
+				CustomColors[ColorNum] = CRGB(buffer[3] | buffer[4] << 7, buffer[5] | buffer[6] << 7, buffer[7] | buffer[8] << 7);
+				Serial.write(ACK);
+				break;
+
+			case DIGITAL_CUSTOM_PALETTE_PROPERTIES:
+				if (buffer[3] == 0x01)
+					customBlend = TBlendType::LINEARBLEND;
+				else
+					customBlend = TBlendType::NOBLEND;
+
+				if (buffer[4] == 0x01)
+					animated = true;
+				else
+					animated = false;
+
+				increment = buffer[5];
+
+				switch (buffer[6])
+				{
+					case 0:
+						SelectedCustomPalette = 0;
+						CustomPalette16 = CRGBPalette16(CustomColors[0], CustomColors[1], CustomColors[2], CustomColors[3],
+							CustomColors[4], CustomColors[5], CustomColors[6], CustomColors[7],
+							CustomColors[8], CustomColors[9], CustomColors[10], CustomColors[11],
+							CustomColors[12], CustomColors[13], CustomColors[14], CustomColors[15]);
+						break;
+					case 1:
+						SelectedCustomPalette = 1;
+						CustomPalette32 = CRGBPalette32(CustomColors[0], CustomColors[1], CustomColors[2], CustomColors[3],
+							CustomColors[4], CustomColors[5], CustomColors[6], CustomColors[7],
+							CustomColors[8], CustomColors[9], CustomColors[10], CustomColors[11],
+							CustomColors[12], CustomColors[13], CustomColors[14], CustomColors[15]);
+						break;
+					case 2:
+						SelectedCustomPalette = 2;
+						CustomPalette256 = CRGBPalette256(CustomColors[0], CustomColors[1], CustomColors[2], CustomColors[3],
+							CustomColors[4], CustomColors[5], CustomColors[6], CustomColors[7],
+							CustomColors[8], CustomColors[9], CustomColors[10], CustomColors[11],
+							CustomColors[12], CustomColors[13], CustomColors[14], CustomColors[15]);
+						break;
+				}
+				Serial.write(ACK);
+				break;
+
+			case ANALOG_CHANGEMODE:
+				analogStripMode = buffer[3];
+				Serial.write(ACK);
+				break;
+
+			case ANALOG_CHANGEINTERVAL:
+				analogInterval = buffer[3];
+				Serial.write(ACK);
+				break;
+
+			case ANALOG_CHANGEBRIGHT:
+				analogBrightness = buffer[3] | (buffer[4] << 7);
+				Serial.write(ACK);
+				break;
+
+			case ANALOG_CHANGECOLOR:
+				analogStaticColorRed = buffer[3] | (buffer[4] << 7);
+				analogStaticColorGreen = buffer[5] | (buffer[6] << 7);
+				analogStaticColorBlue = buffer[7] | (buffer[8] << 7);
+				Serial.write(ACK);
+				break;
+
+			case ANALOG_MUSICAL_PATTERN:
+				analogMusicalRed = buffer[3] | buffer[4] << 7;
+				analogMusicalGreen = buffer[5] | buffer[6] << 7;
+				analogMusicalBlue = buffer[7] | buffer[8] << 7;
+				fillAnalog(analogMusicalRed, analogMusicalGreen, analogMusicalBlue);
+				Serial.write(ACK);
+				break;
+			default:
+				Serial.write(NAK);
+				return;
+				
+		}
+	}
+	else 
+	{
+		Serial.write(NAK);
+	}
+}  
+
+void processIncomingByte(const byte inByte)
+{
+	static byte input_line[128];
+	static unsigned int input_pos = 0;
+
+	switch (inByte)
+	{
+		case MESSAGE_END:   // end of message
+			input_line[input_pos] = 0;  
+			// terminator reached! process input_line here ...
+			process_data(input_line);
+			// reset buffer for next time
+			input_pos = 0;
+			break;
+
+	default:
+		// keep adding if not full ... allow for terminating null byte
+		if (input_pos < (64 - 1))
+			input_line[input_pos++] = inByte;
+		break;
+
+	}
+}
+
+void loop() {
+	//Serial.print(xPortGetCoreID());
+
+	// if serial data available, process it
+	while (Serial.available() > 0)
+		processIncomingByte(Serial.read());
+}
+
+//========================= EFFECT DEFINITIONS =======================
 
 void fillAnalog(int red, int green, int blue)
 {
 #ifdef COMMOM_ANODE
-	analogWrite(RED_PIN, 255 - red);
-	analogWrite(GREEN_PIN, 255 - green);
-	analogWrite(BLUE_PIN, 255 - blue);
+	ledcWrite(1, 255 - red);
+	ledcWrite(2, 255 - green);
+	ledcWrite(3, 255 - blue);
 #else
-	analogWrite(RED_PIN, red);
-	analogWrite(GREEN_PIN, green);
-	analogWrite(BLUE_PIN, blue);
+	//TRATAR USANDO O OUTPUT ADEQUADO
+	ledcWrite(1, red);
+	ledcWrite(2, green);
+	ledcWrite(3, blue);
 #endif	
 	//TODO IMPLEMENT BRIGHT CONTROL
-}
-
-void systemResetCallback() 
-{
-	for (byte i = 0; i < TOTAL_PINS; i++) {
-		if (IS_PIN_ANALOG(i)) {
-		}
-		else if (IS_PIN_DIGITAL(i)) {
-			Firmata.setPinMode(i, OUTPUT);
-		}
-	}
-	firmataExt.reset();
-}
-
-void initTransport() 
-{
-	// Uncomment to save a couple of seconds by disabling the startup blink sequence.
-	Firmata.disableBlinkVersion();
-	Firmata.begin(2400);
-}
-
-void initFirmata() 
-{
-	Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
-
-	sysexManager = LedStripUserSysexManager();
-
-	firmataExt.addFeature(sysexManager);
-	firmataExt.addFeature(digitalOutput);
-	firmataExt.addFeature(analogOutput);
-
-	Firmata.attach(SYSTEM_RESET, systemResetCallback);
-}
-
-void setup() 
-{
-	initFirmata();
-
-	initTransport();
-
-	systemResetCallback();
-
-	Firmata.setPinMode(RED_PIN, OUTPUT);
-	Firmata.setPinMode(GREEN_PIN, OUTPUT);
-	Firmata.setPinMode(BLUE_PIN, OUTPUT);
-
-	FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-
-	AnalogStrip.onRun(AnalogLoop);
-	AnalogStrip.setInterval(10);
-
-	DigitalStrip.onRun(DigitalLoop);
-	DigitalStrip.setInterval(30);
-}
-
-void loop() {
-	while (Firmata.available()) 
-	{
-		Firmata.processInput();
-	}
-
-	if (sysexManager.digitalIntervalHasChanged)
-	{
-		sysexManager.digitalIntervalHasChanged = false;
-		DigitalStrip.setInterval(sysexManager.digitalInterval);
-	}
-
-	if (sysexManager.analogIntervalHasChanged)
-	{
-		sysexManager.analogIntervalHasChanged = false;
-		AnalogStrip.setInterval(sysexManager.analogInterval);
-	}
-
-	if (sysexManager.digitalBrightHasChanged)
-	{
-		sysexManager.digitalBrightHasChanged = false;
-		FastLED.setBrightness(sysexManager.digitalBrightness);
-	}
-
-	if (sysexManager.analogBrightHasChanged)
-	{
-		sysexManager.analogBrightHasChanged = false;
-		//FastLED.setBrightness(sysexManager.analogBrightness);
-	}
-
-	Manager.run();
 }
 
 //Digital Patterns
@@ -730,9 +647,9 @@ void RainbowSnake()
 
 void StaticColor_digital()
 {
-	digitalRed = sysexManager.digitalStaticColorRed;
-	digitalGreen = sysexManager.digitalStaticColorGreen;
-	digitalBlue = sysexManager.digitalStaticColorBlue;
+	digitalRed = digitalStaticColorRed;
+	digitalGreen = digitalStaticColorGreen;
+	digitalBlue = digitalStaticColorBlue;
 
 	fill_solid(leds, NUM_LEDS, CRGB(digitalRed, digitalGreen, digitalBlue));
 	FastLED.show();
@@ -745,7 +662,7 @@ void Breath_digital()
 	colorIndex = (int)startIndex;
 	//pattern being updated
 	for (int i = 0; i < NUM_LEDS; i++) {
-		leds[i] = ColorFromPalette(sysexManager.breathingPalette, colorIndex, 255, LINEARBLEND);
+		leds[i] = ColorFromPalette(breathingPalette, colorIndex, 255, LINEARBLEND);
 		colorIndex += 3;
 	}
 	FastLED.show();
@@ -759,78 +676,204 @@ byte MusicMap(byte value, byte max)
 void Musical_digital()
 {
 
-	CRGB Bass = sysexManager.BassIntensity;
-	CRGB Medio = sysexManager.MedioIntensity;
-	CRGB Treble = sysexManager.TrebleIntensity;
+	// contrói uma palheta de cores simétrica rainbow 
+	// de padrão de cor (RBGR)
+	int block = 0;        	// Tamanho de cada intervalo (em leds)
+	int halfBlock = 0;		// Metade de um intervalo
+	byte gradient = 0;      	// Diferença em cor de cada bloco
+	int central_Point = 0;      	// ponto central da fita (iniciando em zero), que é o ponto final do padrão de cor (RBGR)
+	int i = 0;        		// indice
+	int counter = 0;              // contador que controla o padrão de cor
+	int pattern = 2;      	// par = padrão RGBR, impar = padrão RBGR
+	int mid = (NUM_LEDS / 2);	// meio da fita
+	int colors = 15;		// intervalos em que a fita vai sobre variação
 
-	leds[0]  = CRGB(Bass.r, 0, 0);
-	leds[1]  = CRGB(Bass.r, 0, 0);
-	leds[2]  = CRGB(Bass.r, 0, 0);
-	leds[3]  = CRGB(Bass.r, 0, 0);
+	byte red = 255;
+	byte green = 0;
+	byte blue = 0;
 
-	leds[4]  = CRGB(Bass.r, 0, 0);
-	leds[5]  = CRGB(Bass.r, 0, 0);
-	leds[6]  = CRGB(Bass.r, 0, 0);
-	leds[7]  = CRGB(Bass.r, 0, 0);
-	leds[8]  = CRGB(Bass.r, 0, 0);
-	leds[9]  = CRGB(Bass.r, 0, 0);
-	leds[10] = CRGB(Bass.r, 0, 0);
-	leds[11] = CRGB(Bass.r, 0, 0);
-	leds[12] = CRGB(Bass.r, 0, 0);
-	leds[13] = CRGB(Bass.r, 0, 0);
-	leds[14] = CRGB(Bass.r, 0, 0);
-	leds[15] = CRGB(Bass.r, 0, 0);
-	leds[16] = CRGB(Bass.r, 0, 0);
-	leds[17] = CRGB(Bass.r, 0, 0);
-	leds[18] = CRGB(Bass.r, 0, 0);
-	leds[19] = CRGB(Bass.r, 0, 0);
-	leds[20] = CRGB(Bass.r, 0, 0);
-	leds[21] = CRGB(Bass.r, 0, 0);
-	leds[22] = CRGB(Bass.r, 0, 0);
-	leds[23] = CRGB(Bass.r, 0, 0);
-	leds[24] = CRGB(Bass.r, 0, 0);
-	leds[25] = CRGB(Bass.r, 0, 0);
+	CRGB Bass = BassIntensity;
+	CRGB Medio = MedioIntensity;
+	CRGB Treble = TrebleIntensity;
 
-	leds[26] = CRGB(MusicMap(Bass.r, 0xD5), MusicMap(Medio.g, 0x2B), 0);
-	leds[27] = CRGB(MusicMap(Bass.r, 0xAB), MusicMap(Medio.g, 0x55), 0);
-	leds[28] = CRGB(MusicMap(Bass.r, 0xAB), MusicMap(Medio.g, 0x55), 0);
-	leds[29] = CRGB(MusicMap(Bass.r, 0x55), MusicMap(Medio.g, 0xAB), 0);
-	leds[30] = CRGB(MusicMap(Bass.r, 0x55), MusicMap(Medio.g, 0xAB), 0);
-	leds[31] = CRGB(MusicMap(Bass.r, 0x2B), MusicMap(Medio.g, 0xD5), 0);
+	block = NUM_LEDS / colors;
 
-	leds[32] = CRGB(0, Medio.g, 0);
-	leds[33] = CRGB(0, Medio.g, 0);
-	leds[34] = CRGB(0, Medio.g, 0);
-	leds[35] = CRGB(0, Medio.g, 0);
-	leds[36] = CRGB(0, Medio.g, 0);
+	if (block <= 2)
+		block = 3;
+	else if (block >= 256)
+		block = 255;
 
-	leds[37] = CRGB(0, MusicMap(Medio.g, 0xD5), MusicMap(Treble.b, 0x2B));
-	leds[38] = CRGB(0, MusicMap(Medio.g, 0xAB), MusicMap(Treble.b, 0x55));
-	leds[39] = CRGB(0, MusicMap(Medio.g, 0xAB), MusicMap(Treble.b, 0x55));
-	leds[40] = CRGB(0, MusicMap(Medio.g, 0x55), MusicMap(Treble.b, 0xAB));
-	leds[41] = CRGB(0, MusicMap(Medio.g, 0x55), MusicMap(Treble.b, 0xAB));
-	leds[42] = CRGB(0, MusicMap(Medio.g, 0x2B), MusicMap(Treble.b, 0xD5));
-	
-	leds[43] = CRGB(0, 0, Treble.b);
-	leds[44] = CRGB(0, 0, Treble.b);
-	leds[45] = CRGB(0, 0, Treble.b);
-	leds[46] = CRGB(0, 0, Treble.b);
-	leds[47] = CRGB(0, 0, Treble.b);
-	leds[48] = CRGB(0, 0, Treble.b);
+	if ((NUM_LEDS % 2) == 0) {
+		halfBlock = block / 2;
+		central_Point = mid;
+	}
+	else {
+		halfBlock = (block + 1) / 2;
+		central_Point = mid;
+		leds[mid] = CRGB(Bass.r, 0, 0);
+	}
 
-	/*
-	//startIndex+= 0.2f;
-	startIndex += 1;
-	colorIndex = (int) startIndex;
-	//pattern being updated
-	for (int i = 0; i < NUM_LEDS; i++) {
-		leds[i] = ColorFromPalette(sysexManager.musicalPalette, colorIndex, 255, LINEARBLEND);
-		//byte Bright = (sysexManager.b0 * 0.5f + sysexManager.b1 * 0.3f + sysexManager.b2 * 0.2);
-		//leds[i] = ColorFromPalette(sysexManager.musicalPalette, colorIndex, Bright, LINEARBLEND);
-		colorIndex += 10;
-	}*/
+	gradient = 256 / (block + 1);
+
+	// Pinta a fita de led
+	for (i = central_Point; i >= 1; i--)
+	{
+		if (counter < halfBlock)        			// red
+		{
+			red = 255;
+			green = 0;
+			blue = 0;
+
+			leds[i - 1] = CRGB(Bass.r, 0, 0);
+			leds[NUM_LEDS - i] = CRGB(Bass.r, 0, 0);
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+
+		}
+		else if (counter < block + halfBlock)     		// orange
+		{
+			green += gradient;
+			if (green >= 255) {
+				green = 0;
+			}
+			leds[i - 1] = CRGB(Bass.r, MusicMap(Medio.g, green), 0);
+			leds[NUM_LEDS - i] = CRGB(Bass.r, MusicMap(Medio.g, green), 0);
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+
+		}
+		else if (counter < (block * 2) + halfBlock)     	// orange
+		{
+			red -= gradient;
+			if (red < 0)
+				red = 0;
+
+			leds[i - 1] = CRGB(MusicMap(Bass.r, red), MusicMap(Medio.g, green), 0);
+			leds[NUM_LEDS - i] = CRGB(MusicMap(Bass.r, red), MusicMap(Medio.g, green), 0);
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+		}
+		else if (counter < (block * 3))     			// green
+		{
+			red = 0;
+			green = 255;
+			blue = 0;
+
+			leds[i - 1] = CRGB(0, Medio.g, 0);
+			leds[NUM_LEDS - i] = CRGB(0, Medio.g, 0);
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+		}
+		else if (counter < (block * 4))     			// cian
+		{
+			blue += gradient;
+			if (blue > 255)
+				blue = 255;
+
+			leds[i - 1] = CRGB(0, Medio.g, MusicMap(Treble.b, blue));
+			leds[NUM_LEDS - i] = CRGB(0, Medio.g, MusicMap(Treble.b, blue));
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+		}
+		else if (counter < (block * 5))     			// cian
+		{
+			green -= gradient;
+			if (green < 0)
+				green = 0;
+
+			leds[i - 1] = CRGB(0, MusicMap(Medio.g, green), MusicMap(Treble.b, blue));
+			leds[NUM_LEDS - i] = CRGB(0, MusicMap(Medio.g, green), MusicMap(Treble.b, blue));
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+		}
+		else if (counter < (block * 5) + halfBlock)     	// blue
+		{
+			red = 0;
+			green = 0;
+			blue = 255;
+
+			leds[i - 1] = CRGB(0, 0, Treble.b);
+			leds[NUM_LEDS - i] = CRGB(0, 0, Treble.b);
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+		}
+		else if (counter < (block * 6) + halfBlock)     	// violet
+		{
+			red += gradient;
+			if (red > 255)
+				red = 255;
+
+			leds[i - 1] = CRGB(MusicMap(Bass.r, red), 0, Treble.b);
+			leds[NUM_LEDS - i] = CRGB(MusicMap(Bass.r, red), 0, Treble.b);
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+		}
+		else if (counter < (block * 7) + halfBlock)     	// violet
+		{
+			blue -= gradient;
+			if (blue < 0)
+				blue = 0;
+
+			leds[i - 1] = CRGB(MusicMap(Bass.r, red), 0, MusicMap(Treble.b, blue));
+			leds[NUM_LEDS - i] = CRGB(MusicMap(Bass.r, red), 0, MusicMap(Treble.b, blue));
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+		}
+		else if (counter < (block * 8))    			// red
+		{
+			red = 255;
+			green = 0;
+			blue = 0;
+
+			leds[i - 1] = CRGB(Bass.r, 0, 0);
+			leds[NUM_LEDS - i] = CRGB(Bass.r, 0, 0);
+
+			if ((pattern % 2) == 0)
+				counter++;
+			else
+				counter--;
+		}
+
+		if (counter < 0) { 					// espelha o padrão
+			pattern++;
+			counter = 0;
+		}
+		else if (counter >= ((block * 8))) {
+			pattern++;
+			counter = (block * 7) + halfBlock - 1;
+		}
+	}
+
 
 	FastLED.show();
+
 }
 
 void Deactivated_digital()
@@ -853,7 +896,7 @@ void FullHSVRainbow_digital()
 	FastLED.show();
 }
 
-void FullHSVStripesRainbow_digital() 
+void FullHSVStripesRainbow_digital()
 {
 	//pattern runnign
 	startIndex += 1;
@@ -866,7 +909,7 @@ void FullHSVStripesRainbow_digital()
 	FastLED.show();
 }
 
-void Cloud_digital() 
+void Cloud_digital()
 {
 	//pattern runnign
 	startIndex += 1;
@@ -879,7 +922,7 @@ void Cloud_digital()
 	FastLED.show();
 }
 
-void Lava_digital() 
+void Lava_digital()
 {
 	//pattern runnign
 	startIndex += 1;
@@ -931,7 +974,7 @@ void Party_digital()
 	FastLED.show();
 }
 
-void Heat_digital() 
+void Heat_digital()
 {
 	//pattern runnign
 	startIndex += 1;
@@ -947,33 +990,33 @@ void Heat_digital()
 void CustomPallete_digital()
 {
 	//pattern runnign
-	if(sysexManager.animated) startIndex += 1;
+	if (animated) startIndex += 1;
 	colorIndex = (int)startIndex;
-	byte increment = sysexManager.increment;
+	byte increment = increment;
 	//pattern being updated
-	switch (sysexManager.SelectedCustomPalette)
+	switch (SelectedCustomPalette)
 	{
 	case 0:
 		for (int i = 0; i < NUM_LEDS; i++) {
-			leds[i] = ColorFromPalette(sysexManager.CustomPalette16, colorIndex, 255, sysexManager.customBlend);
+			leds[i] = ColorFromPalette(CustomPalette16, colorIndex, 255, customBlend);
 			colorIndex += increment;
 		}
 		break;
 	case 1:
 		for (int i = 0; i < NUM_LEDS; i++) {
-			leds[i] = ColorFromPalette(sysexManager.CustomPalette32, colorIndex, 255, sysexManager.customBlend);
+			leds[i] = ColorFromPalette(CustomPalette32, colorIndex, 255, customBlend);
 			colorIndex += increment;
 		}
 		break;
 	case 2:
 		for (int i = 0; i < NUM_LEDS; i++) {
-			leds[i] = ColorFromPalette(sysexManager.CustomPalette256, colorIndex, 255, sysexManager.customBlend);
+			leds[i] = ColorFromPalette(CustomPalette256, colorIndex, 255, customBlend);
 			colorIndex += increment;
 		}
 		break;
 	default:
 		for (int i = 0; i < NUM_LEDS; i++) {
-			leds[i] = ColorFromPalette(sysexManager.CustomPalette16, colorIndex, 255, sysexManager.customBlend);
+			leds[i] = ColorFromPalette(CustomPalette16, colorIndex, 255, customBlend);
 			colorIndex += increment;
 		}
 		break;
@@ -1023,7 +1066,7 @@ void RealHSVRainbow_analog()
 	}
 
 	fillAnalog(analogRed, analogGreen, analogBlue);
-	
+
 	analogAngle = (analogAngle + 1) % 360;
 }
 
@@ -1066,9 +1109,9 @@ void SineWaveRainbow_analog()
 
 void StaticColor_analog()
 {
-	analogRed = sysexManager.analogStaticColorRed;
-	analogGreen = sysexManager.analogStaticColorGreen;
-	analogBlue = sysexManager.analogStaticColorBlue;
+	analogRed = analogStaticColorRed;
+	analogGreen = analogStaticColorGreen;
+	analogBlue = analogStaticColorBlue;
 
 	fillAnalog(analogRed, analogGreen, analogBlue);
 }
@@ -1076,9 +1119,9 @@ void StaticColor_analog()
 void Breath_analog()
 {
 
-	analogRed = (sysexManager.analogStaticColorRed   * analogPercent) / 255;
-	analogGreen = (sysexManager.analogStaticColorGreen * analogPercent) / 255;
-	analogBlue = (sysexManager.analogStaticColorBlue  * analogPercent) / 255;
+	analogRed = (analogStaticColorRed   * analogPercent) / 255;
+	analogGreen = (analogStaticColorGreen * analogPercent) / 255;
+	analogBlue = (analogStaticColorBlue  * analogPercent) / 255;
 
 	fillAnalog(analogRed, analogGreen, analogBlue);
 
@@ -1089,10 +1132,12 @@ void Breath_analog()
 
 }
 
-void Musical_analog() 
+void Musical_analog()
 {
-	fillAnalog(sysexManager.analogPalette.r, sysexManager.analogPalette.g, sysexManager.analogPalette.b);
-} 
+	//xSemaphoreTake(mutexAng, portMAX_DELAY);
+	//fillAnalog(analogMusicalRed, analogMusicalGreen, analogMusicalBlue);
+	//xSemaphoreGive(mutexAng);
+}
 
 void random_color_analog()
 {
@@ -1106,7 +1151,7 @@ void random_color_analog()
 	a1 = (random_count + a1 + 1) % 3;
 	color[a1] = lights[(a0 + 100) % 240];
 	color[a2] = 0;
-	
+
 	fillAnalog(color[0], color[1], color[2]);
 
 	random_count = (random_count + 1) % 3;
@@ -1116,5 +1161,3 @@ void Deactivated_analog()
 {
 	fillAnalog(0, 0, 0);
 }
-
-
