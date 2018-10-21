@@ -15,7 +15,7 @@ namespace LedsGUI
 
         ComponentResourceManager resources = new ComponentResourceManager(typeof(LedController));
 
-        private FirmataModule firmata;
+        private MessageModule firmata;
         private CsCoreModule cscore;
 
         private Bitmap _bitmap = new Bitmap(360, 60);
@@ -55,7 +55,6 @@ namespace LedsGUI
                 resumedFromSuspension = value;
                 if (resumedFromSuspension == true)
                 {
-                    TempWorker.RunWorkerAsync();
                     resumedFromSuspension = false;
                 }
             }
@@ -116,8 +115,8 @@ namespace LedsGUI
                 UpdateAnalogCustomButtons();
                 UpdateDigitalCustomButtons();
 
-                UpdateAnalogButtons(AnalogComboBox.SelectedItem as FirmataMode);
-                UpdateDigitalButtons(DigitalComboBox.SelectedItem as FirmataMode);
+                UpdateAnalogButtons(AnalogComboBox.SelectedItem as StripMode);
+                UpdateDigitalButtons(DigitalComboBox.SelectedItem as StripMode);
 
                 for (int i=0; i < s.AnalogModesAvailable.Count; i++)
                 {
@@ -206,16 +205,16 @@ namespace LedsGUI
 
             AvailableSerialPorts = new List<string>(SerialPort.GetPortNames());
 
-            firmata = new FirmataModule();
+            firmata = new MessageModule(this);
             DigitalCustomPaletteMode.SetFirmata(firmata);
             DigitalCustomPaletteMode.SetLastActivatePalette(LastActivatedPalette);
 
-            firmata.SetStatusLabel(ComPortStatusLabel, MessageStatusLabel);
+            firmata.SetStatusLabel(ComPortStatusLabel, MessageStatusLabel, QueueSizeStatusLabel);
 
-            foreach (FirmataMode mode in firmata.AnalogModesAvailable)
+            foreach (StripMode mode in firmata.AnalogModesAvailable)
                 AnalogComboBox.Items.Add(mode);
 
-            foreach (FirmataMode mode in firmata.DigitalModesAvailable)
+            foreach (StripMode mode in firmata.DigitalModesAvailable)
                 DigitalComboBox.Items.Add(mode);
 
             AnalogComboBox.SelectedIndex = 0;
@@ -233,13 +232,13 @@ namespace LedsGUI
 
             if (SelectedComPort != null && AvailableSerialPorts.IndexOf(SelectedComPort) != -1)
             {
-                firmata.FirmataSetup(SelectedComPort);
+                firmata.CommunicationSetup(SelectedComPort);
                 AnalogComboBox_SelectedIndexChanged(AnalogComboBox, EventArgs.Empty);
                 DigitalComboBox_SelectedIndexChanged(DigitalComboBox, EventArgs.Empty);
                 
-                TempWorker.DoWork += TempWorker_DoWork;
+
                 bw.DoWork += Bw_DoWork;
-                TempWorker.RunWorkerAsync();
+
             }
 
             //this piece of is here to 
@@ -250,17 +249,6 @@ namespace LedsGUI
             this.Owner = form1;
         }
 
-        private void TempWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            //sleep time to guarantee that the saved config are, in fact, loaded
-            System.Threading.Thread.Sleep(3000);
-
-            this.Invoke(new Action(() =>
-            {
-                AnalogComboBox_SelectedIndexChanged(AnalogComboBox, EventArgs.Empty);
-                DigitalComboBox_SelectedIndexChanged(DigitalComboBox, EventArgs.Empty);
-            }));
-        }
 
         private void Visualization_VisibleChanged(object sender, EventArgs e)
         {
@@ -341,7 +329,7 @@ namespace LedsGUI
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             SelectedComPort = item.Text;
-            firmata.FirmataSetup(SelectedComPort);
+            firmata.CommunicationSetup(SelectedComPort);
 
             if (LastActivatedPalette != null) firmata.SendDigitalCustomPalette(LastActivatedPalette);
 
@@ -377,6 +365,8 @@ namespace LedsGUI
 
         private void maximizarToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
+
             this.WindowState = FormWindowState.Normal;
             //this.Show();
 
@@ -389,17 +379,25 @@ namespace LedsGUI
 
         private void TrayIcon_DoubleClick(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Normal;
-            
+            try
+            {
+                this.WindowState = FormWindowState.Normal;
 
-            //positions the window above the tray icon
-            this.Left = Cursor.Position.X - this.Width / 2;
-            this.Top = Screen.PrimaryScreen.WorkingArea.Bottom - this.Height;
 
-            //this.Show();
-            this.ShowInTaskbar = true;
-            
-            this.Activate();
+                //positions the window above the tray icon
+                this.Left = Cursor.Position.X - this.Width / 2;
+                this.Top = Screen.PrimaryScreen.WorkingArea.Bottom - this.Height;
+
+                //this.Show();
+                this.ShowInTaskbar = true;
+
+                this.Activate();
+            }
+            catch (Exception)
+            {
+
+            }
+
         }
 
         private void visualizationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -618,24 +616,29 @@ namespace LedsGUI
             #endregion            
         }
 
+        public void changeSoundSpectrumInterval(int value)
+        {
+            if(value > 0)
+                SoundSpectrumTimer.Interval += value;
+            else
+            {
+                if(SoundSpectrumTimer.Interval > 1)
+                    SoundSpectrumTimer.Interval += value;
+            }
+        }
+
         //Timers Tick Event Methods
         private void SoundSpectrum_Tick(object sender, EventArgs e)
         {
-            Stopwatch sw = Stopwatch.StartNew();
-            if (AnalogComboBox.SelectedIndex != 5 && DigitalComboBox.SelectedIndex != 6)
-            {
-                SoundSpectrumTimer.Stop();
-                if (visualization.Visible == false) cscore.Listen(false);
-                return;
-            }
-            if (AnalogComboBox.SelectedIndex == 5) //musical mode analog
-            {
-                //render
-                GenerateLineSpectrum();
-                GenerateVoice3DPrintSpectrum();
-                //send Result
-                firmata.SoundSpectrumTick();
-            }
+            //Stopwatch sw = Stopwatch.StartNew();
+            //if (AnalogComboBox.SelectedIndex != 5 && DigitalComboBox.SelectedIndex != 6)
+            //{
+            //    SoundSpectrumTimer.Stop();
+            //    if (visualization.Visible == false)
+            //        cscore.Listen(false);
+            //    return;
+            //}
+
             if (DigitalComboBox.SelectedIndex == 6) //musical mode digital
             {
                 //render
@@ -644,8 +647,19 @@ namespace LedsGUI
                 //send result
                 firmata.DigitalSoundSpectrumTick();
             }
-            sw.Stop();
-            MusicalRealSamplingToolStripStatusLabel.Text = sw.ElapsedMilliseconds.ToString();
+
+            if (AnalogComboBox.SelectedIndex == 5) //musical mode analog
+            {
+                //render
+                GenerateLineSpectrum();
+                GenerateVoice3DPrintSpectrum();
+                //send Result
+                firmata.SoundSpectrumTick();
+            }
+            //sw.Stop();
+            //MusicalRealSamplingToolStripStatusLabel.Text = sw.ElapsedMilliseconds.ToString();
+
+            delayStatusLabel.Text = SoundSpectrumTimer.Interval.ToString();
         }
 
         private void VisualizationTimer_Tick(object sender, EventArgs e)
@@ -660,7 +674,7 @@ namespace LedsGUI
 
         private void AnalogComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FirmataMode AnalogMode = AnalogComboBox.SelectedItem as FirmataMode;
+            StripMode AnalogMode = AnalogComboBox.SelectedItem as StripMode;
 
             UpdateAnalogButtons(AnalogMode);
 
@@ -678,7 +692,7 @@ namespace LedsGUI
 
         private void AnalogMoreButton_Click(object sender, EventArgs e)
         {
-            if ((AnalogComboBox.SelectedItem as FirmataMode).moreMode == FirmataMode.MoreMode.analogMusical)
+            if ((AnalogComboBox.SelectedItem as StripMode).moreMode == StripMode.MoreMode.analogMusical)
             {
                 MusicalModeForm.Left = this.Location.X;
                 MusicalModeForm.Top = this.Location.Y - this.Height / 3;
@@ -721,7 +735,7 @@ namespace LedsGUI
         private void AnalogSpeedScroll_Scroll(object sender, EventArgs e)
         {
             TrackBar current = sender as TrackBar;
-            FirmataMode mode = AnalogComboBox.SelectedItem as FirmataMode;
+            StripMode mode = AnalogComboBox.SelectedItem as StripMode;
             mode.Speed = (byte)current.Value;
             firmata.SendAnalogSpeed((Byte)current.Value);
         }
@@ -729,14 +743,14 @@ namespace LedsGUI
         private void AnalogBrightScroll_Scroll(object sender, EventArgs e)
         {
             TrackBar current = sender as TrackBar;
-            FirmataMode mode = AnalogComboBox.SelectedItem as FirmataMode;
+            StripMode mode = AnalogComboBox.SelectedItem as StripMode;
             mode.Bright = (byte)current.Value;
             firmata.SendAnalogBright((Byte)current.Value);
         }
 
-        private void UpdateAnalogButtons(FirmataMode mode)
+        private void UpdateAnalogButtons(StripMode mode)
         {
-            if (mode.moreMode == FirmataMode.MoreMode.none)
+            if (mode.moreMode == StripMode.MoreMode.none)
                 AnalogMoreButton.Enabled = false;
             else
                 AnalogMoreButton.Enabled = true;
@@ -783,7 +797,7 @@ namespace LedsGUI
 
         private void DigitalComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FirmataMode DigitalMode = DigitalComboBox.SelectedItem as FirmataMode;
+            StripMode DigitalMode = DigitalComboBox.SelectedItem as StripMode;
 
             UpdateDigitalButtons(DigitalMode);
 
@@ -802,14 +816,14 @@ namespace LedsGUI
 
         private void DigitalMoreButton_Click(object sender, EventArgs e)
         {
-            if ((DigitalComboBox.SelectedItem as FirmataMode).moreMode == FirmataMode.MoreMode.digitalMusical)
+            if ((DigitalComboBox.SelectedItem as StripMode).moreMode == StripMode.MoreMode.digitalMusical)
             {
                 DigitalMusicalModeForm.Left = this.Location.X;
                 DigitalMusicalModeForm.Top = this.Location.Y - this.Height / 3;
                 DigitalMusicalModeForm.Show();
                 DigitalMusicalModeForm.Activate();
             }
-            else if ((DigitalComboBox.SelectedItem as FirmataMode).moreMode == FirmataMode.MoreMode.digitalCustomPattern)
+            else if ((DigitalComboBox.SelectedItem as StripMode).moreMode == StripMode.MoreMode.digitalCustomPattern)
             {
                 DigitalCustomPaletteMode.Show();
                 DigitalCustomPaletteMode.Activate();
@@ -848,7 +862,7 @@ namespace LedsGUI
         private void DigitalSpeedScroll_Scroll(object sender, EventArgs e)
         {
             TrackBar current = sender as TrackBar;
-            FirmataMode mode = DigitalComboBox.SelectedItem as FirmataMode;
+            StripMode mode = DigitalComboBox.SelectedItem as StripMode;
             mode.Speed = (byte)current.Value;
             firmata.SendDigitalSpeed((byte)current.Value);
         }
@@ -856,14 +870,14 @@ namespace LedsGUI
         private void DigitalBrightScroll_Scroll(object sender, EventArgs e)
         {
             TrackBar current = sender as TrackBar;
-            FirmataMode mode = DigitalComboBox.SelectedItem as FirmataMode;
+            StripMode mode = DigitalComboBox.SelectedItem as StripMode;
             mode.Bright = (byte)current.Value;
             firmata.SendDigitalBright((byte)current.Value);
         }
 
-        private void UpdateDigitalButtons(FirmataMode mode)
+        private void UpdateDigitalButtons(StripMode mode)
         {
-            if (mode.moreMode == FirmataMode.MoreMode.none)
+            if (mode.moreMode == StripMode.MoreMode.none)
                 DigitalMoreButton.Enabled = false;
             else
                 DigitalMoreButton.Enabled = true;

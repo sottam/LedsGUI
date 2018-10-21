@@ -115,16 +115,16 @@ namespace LedsGUI.Cscore
                         switch (dp)
                         {
                             case DrawPurpose.ForAnalog:
-                                FirmataModule.SoundSpectrumColor = pen.Color;
+                                MessageModule.SoundSpectrumColor = pen.Color;
                                 break;
                             case DrawPurpose.ForDigitalBass:
-                                FirmataModule.DigitalSpectrumColor = Color.FromArgb(pen.Color.R, FirmataModule.DigitalSpectrumColor.G, FirmataModule.DigitalSpectrumColor.B);
+                                MessageModule.DigitalSpectrumColor = Color.FromArgb(pen.Color.R, MessageModule.DigitalSpectrumColor.G, MessageModule.DigitalSpectrumColor.B);
                                 break;
                             case DrawPurpose.ForDigitalMedio:
-                                FirmataModule.DigitalSpectrumColor = Color.FromArgb(FirmataModule.DigitalSpectrumColor.R, pen.Color.G, FirmataModule.DigitalSpectrumColor.B);
+                                MessageModule.DigitalSpectrumColor = Color.FromArgb(MessageModule.DigitalSpectrumColor.R, pen.Color.G, MessageModule.DigitalSpectrumColor.B);
                                 break;
                             case DrawPurpose.ForDigitalTreble:
-                                FirmataModule.DigitalSpectrumColor = Color.FromArgb(FirmataModule.DigitalSpectrumColor.R, FirmataModule.DigitalSpectrumColor.G, pen.Color.B);
+                                MessageModule.DigitalSpectrumColor = Color.FromArgb(MessageModule.DigitalSpectrumColor.R, MessageModule.DigitalSpectrumColor.G, pen.Color.B);
                                 break;
                             case DrawPurpose.ForGeneric:
                                 break;

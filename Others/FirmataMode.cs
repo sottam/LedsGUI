@@ -9,7 +9,7 @@ namespace LedsGUI
 {
     [Serializable]
     [SettingsSerializeAs(SettingsSerializeAs.Binary)]
-    public class FirmataMode
+    public class StripMode
     {
         public enum MoreMode { none, analogMusical, digitalMusical, digitalCustomPattern }
         //interface
@@ -24,7 +24,7 @@ namespace LedsGUI
         public byte Bright { get; set; } = 255;
 
 
-        public FirmataMode(string Name, int ModeNumber, bool UseColor, bool UseSpeed, bool UseBright, MoreMode moreMode)
+        public StripMode(string Name, int ModeNumber, bool UseColor, bool UseSpeed, bool UseBright, MoreMode moreMode)
         {
             this.Name = Name;
             this.ModeNumber = ModeNumber;
@@ -34,7 +34,7 @@ namespace LedsGUI
             this.moreMode = moreMode;
         }
 
-        public FirmataMode(string Name, int ModeNumber, bool UseColor, bool UseSpeed, bool UseBright)
+        public StripMode(string Name, int ModeNumber, bool UseColor, bool UseSpeed, bool UseBright)
         {
             this.Name = Name;
             this.ModeNumber = ModeNumber;

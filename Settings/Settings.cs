@@ -20,8 +20,8 @@ namespace LedsGUI
 
         internal String SelectedArduinoPort { get; set; }
 
-        internal List<FirmataMode> AnalogModesAvailable { get; set; }
-        internal List<FirmataMode> DigitalModesAvailable { get; set; }
+        internal List<StripMode> AnalogModesAvailable { get; set; }
+        internal List<StripMode> DigitalModesAvailable { get; set; }
 
         internal int AnalogSelectedModeIndex   { get; set; }
         internal int DigitalSelectedModeIndex { get; set; }
@@ -36,8 +36,8 @@ namespace LedsGUI
             DigitalBackColors = new Dictionary<string, Color>();
             AnalogFixedCustomColor = new Color();
 
-            AnalogModesAvailable = new List<FirmataMode>();
-            DigitalModesAvailable = new List<FirmataMode>();
+            AnalogModesAvailable = new List<StripMode>();
+            DigitalModesAvailable = new List<StripMode>();
     }
 
         internal void Save(string fileName = @"LEDSGUIsettings.ini")

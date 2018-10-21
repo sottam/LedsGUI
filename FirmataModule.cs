@@ -1,6 +1,4 @@
-﻿using Solid.Arduino;
-using Solid.Arduino.Firmata;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO.Ports;
@@ -14,10 +12,18 @@ namespace LedsGUI
 {
 
 
-    public class FirmataModule : IDisposable
+    public class MessageModule : IDisposable
     {
         public bool Ready { get; private set; } = false;
-        private bool isSendingCustomPalette = false;
+
+        System.Timers.Timer messageSender = new System.Timers.Timer();
+
+        SerialPort serialPort = new SerialPort();
+        const int BAUDRATE = 921600;
+        public static Queue<byte[]> messageQueue = new Queue<byte[]>();
+
+        const byte ACK                               = 0x06;
+        const byte NCK                               = 0x15;
 
         const byte STRIP_DATA                        = 0x0F;
 
@@ -35,15 +41,14 @@ namespace LedsGUI
         const byte ANALOG_CHANGECOLOR                = 0x0B;
         const byte ANALOG_MUSICAL_PATTERN            = 0x0C;
 
-        public List<FirmataMode> AnalogModesAvailable = new List<FirmataMode>();
-        public List<FirmataMode> DigitalModesAvailable = new List<FirmataMode>();
+        public List<StripMode> AnalogModesAvailable = new List<StripMode>();
+        public List<StripMode> DigitalModesAvailable = new List<StripMode>();
 
-        
-        private EnhancedSerialConnection connection;
-        private ArduinoSession arduino;
+        private LedController _ledController;
 
         private ToolStripStatusLabel _COMStatusLabel;
         private ToolStripStatusLabel _MessageLabel;
+        private ToolStripStatusLabel _QueueSizeLabel;
 
         private Random random = new Random();
 
@@ -67,60 +72,185 @@ namespace LedsGUI
                                             0xFC, 0xFC, 0xFC, 0xFC, 0xFC, 0xFC, 0xFC, 0xFC, 0xFD, 0xFD, 0xFD, 0xFD, 0xFD, 0xFD, 0xFD, 0xFD,
                                             0xFD, 0xFD, 0xFD, 0xFD, 0xFD, 0xFD, 0xFD, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFF, 0xFF};
 
+        //Mutex mutex = new Mutex();
 
         //random
         int[] color = new int[3];
         Random rnd = new Random();
 
-        public FirmataModule()
+        public MessageModule(LedController mainForm)
         {
-            AnalogModesAvailable.Add(new FirmataMode("Real HSV Rainbow", 0, false, true, true));
-            AnalogModesAvailable.Add(new FirmataMode("Power Conscious Rainbow", 1, false, true, true));
-            AnalogModesAvailable.Add(new FirmataMode("Sine Wave Rainbow", 2, false, true, true));
-            AnalogModesAvailable.Add(new FirmataMode("Static Color", 3, true, false, true));
-            AnalogModesAvailable.Add(new FirmataMode("Breathing", 4, true, true, false));
-            AnalogModesAvailable.Add(new FirmataMode("Musical", 5, false, false, false, FirmataMode.MoreMode.analogMusical));
-            AnalogModesAvailable.Add(new FirmataMode("Random Color", 6, false, true, true));
-            AnalogModesAvailable.Add(new FirmataMode("Deactivated", 7, false, false, false));
+            _ledController = mainForm;
 
-            DigitalModesAvailable.Add(new FirmataMode("Snake Rainbow", 0, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Real HSV Rainbow (Analog)", 1, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Power Conscious Rainbow (Analog)", 2, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Sine Wave Rainbow (Analog)", 3, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Static Color", 4, true, false, true));
-            DigitalModesAvailable.Add(new FirmataMode("Breathing", 5, true, true, false));
-            DigitalModesAvailable.Add(new FirmataMode("Musical", 6, false, false, false, FirmataMode.MoreMode.digitalMusical));
-            DigitalModesAvailable.Add(new FirmataMode("Deactivated", 7, false, false, false));
-            DigitalModesAvailable.Add(new FirmataMode("HSV Rainbow", 8, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("HSV Rainbow Stripes", 9, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Cloud", 10, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Lava", 11, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Ocean", 12, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Forest", 13, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Party", 14, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Heat", 15, false, true, true));
-            DigitalModesAvailable.Add(new FirmataMode("Custom Pallete", 16, false, true, true, FirmataMode.MoreMode.digitalCustomPattern));
+            serialPort.BaudRate = BAUDRATE;
+            serialPort.DataReceived += SerialPort_DataReceived;
+
+            messageSender.Elapsed += MessageSender_Tick;
+            messageSender.Interval = 1;
+            messageSender.AutoReset = true;
+            messageSender.Enabled = false;
+
+            AnalogModesAvailable.Add(new StripMode("Real HSV Rainbow", 0, false, true, true));
+            AnalogModesAvailable.Add(new StripMode("Power Conscious Rainbow", 1, false, true, true));
+            AnalogModesAvailable.Add(new StripMode("Sine Wave Rainbow", 2, false, true, true));
+            AnalogModesAvailable.Add(new StripMode("Static Color", 3, true, false, true));
+            AnalogModesAvailable.Add(new StripMode("Breathing", 4, true, true, false));
+            AnalogModesAvailable.Add(new StripMode("Musical", 5, false, false, false, StripMode.MoreMode.analogMusical));
+            AnalogModesAvailable.Add(new StripMode("Random Color", 6, false, true, true));
+            AnalogModesAvailable.Add(new StripMode("Deactivated", 7, false, false, false));
+
+            DigitalModesAvailable.Add(new StripMode("Snake Rainbow", 0, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Real HSV Rainbow (Analog)", 1, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Power Conscious Rainbow (Analog)", 2, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Sine Wave Rainbow (Analog)", 3, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Static Color", 4, true, false, true));
+            DigitalModesAvailable.Add(new StripMode("Breathing", 5, true, true, false));
+            DigitalModesAvailable.Add(new StripMode("Musical", 6, false, false, false, StripMode.MoreMode.digitalMusical));
+            DigitalModesAvailable.Add(new StripMode("Deactivated", 7, false, false, false));
+            DigitalModesAvailable.Add(new StripMode("HSV Rainbow", 8, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("HSV Rainbow Stripes", 9, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Cloud", 10, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Lava", 11, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Ocean", 12, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Forest", 13, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Party", 14, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Heat", 15, false, true, true));
+            DigitalModesAvailable.Add(new StripMode("Custom Pallete", 16, false, true, true, StripMode.MoreMode.digitalCustomPattern));
             //implement cobrinha like pacman sugestao da neechan
         }
 
-        public void SetStatusLabel(ToolStripStatusLabel COM, ToolStripStatusLabel Message)
-        {
-            this._COMStatusLabel = COM;
-            this._MessageLabel = Message;
-        }
+        bool ACK_received = true;
+        bool NCK_received = false;
 
-        public void FirmataSetup(String porta)
+        int LastQueueCount = 0;
+        float delta_queue = 0;
+        
+        private void MessageSender_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
             try
             {
-                if (arduino != null)
+                
+
+                if (messageQueue.Count == 0) return;
+                if (ACK_received)
                 {
-                arduino.Clear();
-                arduino.Dispose();
+                    ACK_received = false;
+                    byte[] messageToSend = messageQueue.Dequeue();
+                    
+                    serialPort.Write(messageToSend, 0, messageToSend.Length);
+
+                }
+                if (NCK_received)
+                {
+                    NCK_received = false;
+                    byte[] messageToSend = messageQueue.Peek();
+                    serialPort.Write(messageToSend, 0, messageToSend.Length);
                 }
 
-                connection = new EnhancedSerialConnection(porta, SerialBaudRate.Bps_2400);
-                arduino = new ArduinoSession(connection);
+                int count = messageQueue.Count;
+                _QueueSizeLabel.Text = count.ToString();
+
+                delta_queue = count - LastQueueCount;
+
+
+                if (delta_queue > 2)
+                {
+                    _ledController.Invoke(new Action(() =>
+                    {
+                        _ledController.changeSoundSpectrumInterval(1);
+                    }));
+
+                    //Console.WriteLine("AUMENTANDOOOO");
+                }
+                else if( delta_queue < -2)
+                {
+                    _ledController.Invoke(new Action(() =>
+                    {
+                        _ledController.changeSoundSpectrumInterval(-1);
+                    }));
+                }
+                else if (count > 10 && delta_queue > -2 && delta_queue < 2)
+                {
+                    _ledController.Invoke(new Action(() =>
+                    {
+                        _ledController.changeSoundSpectrumInterval(1);
+                    }));
+                }
+                else if (count < 2 && delta_queue > -2 && delta_queue < 2)
+                {
+                    _ledController.Invoke(new Action(() =>
+                    {
+                        _ledController.changeSoundSpectrumInterval(-1);
+                    }));
+                }
+
+                else if (count < 5 && delta_queue > -2 && delta_queue < 2)
+                {
+                    //DO NOTHING, IT IS JUST FINE
+                }
+                else if( count < 10 && delta_queue > -2 && delta_queue < 2)
+                {
+                    _ledController.Invoke(new Action(() =>
+                    {
+                        _ledController.changeSoundSpectrumInterval(-1);
+                    }));
+                }
+
+                LastQueueCount = count;
+            }
+            catch (Exception)
+            {
+                
+            }
+            
+        }
+
+        private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            byte input = (byte)serialPort.ReadByte();
+            switch (input)
+            {
+                case ACK:
+                    ACK_received = true;
+                    break;
+                case NCK:
+                    NCK_received = true;
+                    break;
+            }
+
+            //Console.WriteLine("{0:X}",input);
+        }
+
+        public void SetStatusLabel(ToolStripStatusLabel COM, 
+                                   ToolStripStatusLabel Message, 
+                                   ToolStripStatusLabel QueueSize)
+        {
+            this._COMStatusLabel = COM;
+            this._MessageLabel = Message;
+            this._QueueSizeLabel = QueueSize;
+        }
+
+        public void CommunicationSetup(String porta)
+        {
+            try
+            {
+                if (serialPort.IsOpen)
+                {
+                    serialPort.Close();
+                    serialPort.PortName = porta;
+                    serialPort.Open();
+                    messageQueue.Clear();
+                    ACK_received = true;
+                    messageSender.Enabled = true;
+                }
+                else
+                {
+                    serialPort.PortName = porta;
+                    serialPort.Open();
+                    messageQueue.Clear();
+                    ACK_received = true;
+                    messageSender.Enabled = true;
+                }     
 
                 _COMStatusLabel.Text = porta;
                 _MessageLabel.Text = "Connected.";
@@ -129,6 +259,7 @@ namespace LedsGUI
             }
             catch (Exception e)
             {
+                messageSender.Enabled = false;
                 _COMStatusLabel.Text = porta;
                 _MessageLabel.Text = e.Message;
 
@@ -136,11 +267,12 @@ namespace LedsGUI
             }
         }
 
-        private void FirmataSerialWrite(byte[] buffer, int count)
+        private void SerialWrite(byte[] messageToSend)
         {
             try
             {
-                connection.Write(buffer, 0, count);
+                //connection.Write(buffer, 0, count);
+                messageQueue.Enqueue(messageToSend);
             }
             catch (Exception e)
             {
@@ -151,18 +283,14 @@ namespace LedsGUI
         public void Stop()
         {
             Ready = false;
-            if(arduino != null) arduino.Dispose();
+            if (serialPort.IsOpen) serialPort.Close();
             _MessageLabel.Text = "Not Connected";
             _COMStatusLabel.Text = "COM#";
         }
 
         public void SendDigitalCustomPalette(CustomPalette customPalette)
         {
-            if (customPalette == null || !Ready) return;
-            //ensure that the cummunication channel is clear as possible
-            //if analog musicalmode is active, it will not send any updates to analog strip
-            //while a custom digital palette is being sent
-            isSendingCustomPalette = true;
+            if (customPalette == null || !Ready) return;          
             
             //it will send 16 short messages for each color
             //then it will send a message with the properties
@@ -183,7 +311,7 @@ namespace LedsGUI
                 command[8] = (byte) (customPalette.PatternColors[i].B & 0x7F);
                 command[9] = (byte)((customPalette.PatternColors[i].B >> 7) & 0x7F);
 
-                FirmataSerialWrite(command, command.Length);
+                SerialWrite(command);
             }
 
             command = new byte[8];
@@ -197,16 +325,12 @@ namespace LedsGUI
             command[6] = (byte) customPalette.paletteSize;
 
             command[7] = 0xF7;
-            FirmataSerialWrite(command, command.Length);
-
-
-            isSendingCustomPalette = false;
-
+            SerialWrite(command);
         }
 
         public void SoundSpectrumTick()
         {
-            if (SoundSpectrumColor == null || !Ready || isSendingCustomPalette) return;
+            if (SoundSpectrumColor == null || !Ready ) return;
 
             byte Bass = ExponentialCurve[SoundSpectrumColor.R];
             byte Medio = ExponentialCurve[SoundSpectrumColor.G];
@@ -226,8 +350,7 @@ namespace LedsGUI
 
             command[9] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
-
+            SerialWrite(command);
         }
 
         public void DigitalSoundSpectrumTick()
@@ -238,7 +361,7 @@ namespace LedsGUI
             byte Medio = ExponentialCurve[DigitalSpectrumColor.G];
             byte Treble = ExponentialCurve[DigitalSpectrumColor.B];
 
-            byte[] command = new byte[16];
+            byte[] command = new byte[10];
             command[0] = 0xF0;
             command[1] = STRIP_DATA;
             command[2] = DIGITAL_MUSICAL_PATTERN;
@@ -254,7 +377,7 @@ namespace LedsGUI
 
             command[9] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
+            SerialWrite(command);
         }
 
         public byte MapValue(double SourceValue, double FromSource, double ToSource, double FromTarget, double ToTarget)
@@ -265,6 +388,7 @@ namespace LedsGUI
         public void SendDigitalMode(byte mode)
         {
             if (!Ready) return;
+            
 
             byte[] command = new byte[5];
             command[0] = 0xF0;
@@ -273,13 +397,14 @@ namespace LedsGUI
             command[3] = mode;
             command[4] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
+            SerialWrite(command);
+            
         }
 
         public void SendDigitalSpeed(byte speed)
         {
             if (!Ready) return;
-
+            
             byte[] command = new byte[5];
             command[0] = 0xF0;
             command[1] = STRIP_DATA;
@@ -287,13 +412,14 @@ namespace LedsGUI
             command[3] = speed;
             command[4] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
+            SerialWrite(command);
+            
         }
 
         public void SendDigitalBright(byte bright)
         {
             if (!Ready) return;
-
+            
             byte[] command = new byte[6];
             command[0] = 0xF0;
             command[1] = STRIP_DATA;
@@ -302,13 +428,14 @@ namespace LedsGUI
             command[4] = (byte)(bright >> 7);
             command[5] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
+            SerialWrite(command);
+            
         }
 
         public void SendDigitalColor(Color color)
         {
             if (!Ready) return;
-
+            
             byte[] command = new byte[10];
             command[0] = 0xF0;
             command[1] = STRIP_DATA;
@@ -321,12 +448,14 @@ namespace LedsGUI
             command[8] = (byte)(color.B >> 7);
             command[9] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
+            SerialWrite(command);
+            
         }
 
         public void SendAnalogMode(byte mode)
         {
             if (!Ready) return;
+            
 
             byte[] command = new byte[5];
             command[0] = 0xF0;
@@ -335,12 +464,14 @@ namespace LedsGUI
             command[3] = mode;
             command[4] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
+            SerialWrite(command);
+            
         }
 
         public void SendAnalogSpeed(byte speed)
         {
             if (!Ready) return;
+            
 
             byte[] command = new byte[5];
             command[0] = 0xF0;
@@ -349,26 +480,31 @@ namespace LedsGUI
             command[3] = speed;
             command[4] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
+            SerialWrite(command);
+            
         }
 
         public void SendAnalogBright(byte bright)
         {
             if (!Ready) return;
+            
 
-            byte[] command = new byte[5];
+            byte[] command = new byte[6];
             command[0] = 0xF0;
-            command[1] = ANALOG_CHANGEBRIGHT;
-            command[2] = (byte)(bright & 0x7F);
-            command[3] = (byte)(bright >> 7);
-            command[4] = 0xF7;
+            command[1] = STRIP_DATA;
+            command[2] = ANALOG_CHANGEBRIGHT;
+            command[3] = (byte)(bright & 0x7F);
+            command[4] = (byte)(bright >> 7);
+            command[5] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
+            SerialWrite(command);
+            
         }
 
         public void SendAnalogColor(Color color)
         {
             if (!Ready) return;
+            
 
             byte[] command = new byte[10];
             command[0] = 0xF0;
@@ -382,7 +518,8 @@ namespace LedsGUI
             command[8] = (byte)(color.B >> 7);
             command[9] = 0xF7;
 
-            FirmataSerialWrite(command, command.Length);
+            SerialWrite(command);
+            
         }
 
         public void Dispose()
@@ -395,17 +532,11 @@ namespace LedsGUI
         {
             if (disposing)
             {
-                // free managed resources  
-                if (connection != null)
+                // free managed resources
+                if(serialPort != null)
                 {
-                    connection.Dispose();
-                    connection = null;
-                }
-
-                if (arduino != null)
-                {
-                    arduino.Dispose();
-                    arduino = null;
+                    serialPort.Dispose();
+                    serialPort = null;
                 }
             }
         }

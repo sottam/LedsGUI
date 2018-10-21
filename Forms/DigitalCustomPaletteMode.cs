@@ -15,7 +15,7 @@ namespace LedsGUI
     {
         public XMLCustomPalettes xmlHandler = new XMLCustomPalettes();
 
-        private FirmataModule _firmata { get; set; }
+        private MessageModule _firmata { get; set; }
         private CustomPalette _LastActivePalette { get; set; }
 
         private Button[] ColorsButtons = new Button[16];
@@ -32,7 +32,7 @@ namespace LedsGUI
             InitializeComponent();
         }
 
-        public void SetFirmata(FirmataModule firmata)
+        public void SetFirmata(MessageModule firmata)
         {
             this._firmata = firmata;
         }

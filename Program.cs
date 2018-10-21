@@ -19,7 +19,8 @@ namespace LedsGUI
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            SystemEvents.PowerModeChanged += LedController.SystemEvents_PowerModeChanged; 
+            SystemEvents.PowerModeChanged += LedController.SystemEvents_PowerModeChanged;
+
 
             Application.Run(new LedController());
         }
