@@ -1134,9 +1134,7 @@ void Breath_analog()
 
 void Musical_analog()
 {
-	//xSemaphoreTake(mutexAng, portMAX_DELAY);
 	//fillAnalog(analogMusicalRed, analogMusicalGreen, analogMusicalBlue);
-	//xSemaphoreGive(mutexAng);
 }
 
 void random_color_analog()
